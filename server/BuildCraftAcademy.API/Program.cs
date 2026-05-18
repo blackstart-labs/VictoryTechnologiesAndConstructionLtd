@@ -75,6 +75,8 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ICmsService, CmsService>();
+builder.Services.AddScoped<ICourseModuleService, CourseModuleService>();
+builder.Services.AddScoped<IProgressService, ProgressService>();
 
 var app = builder.Build();
 

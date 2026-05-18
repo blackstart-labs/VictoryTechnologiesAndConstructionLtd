@@ -23,5 +23,7 @@ namespace BuildCraftAcademy.API.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+
+        public ICollection<CourseModule> Modules { get; set; } = new List<CourseModule>();
     }
 }

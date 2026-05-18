@@ -101,4 +101,69 @@ Accept: application/json
 GET {{HostAddress}}/api/cms/home-hero-title
 Accept: application/json
 
+### ---------------- COURSE MODULES & LESSONS ---------------- ###
+
+### Create Module
+POST {{HostAddress}}/api/coursemodule
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "courseId": "00000000-0000-0000-0000-000000000000",
+  "title": "Getting Started",
+  "description": "Introduction and setup",
+  "order": 1,
+  "isPublished": true
+}
+
+### Add Lesson to Module
+POST {{HostAddress}}/api/coursemodule/lessons
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "moduleId": "00000000-0000-0000-0000-000000000000",
+  "title": "Welcome & Overview",
+  "videoUrl": "https://cloudinary.com/video/sample",
+  "durationInSeconds": 300,
+  "order": 1,
+  "isPublished": true
+}
+
+### Add Resource Link to Module
+POST {{HostAddress}}/api/coursemodule/resources
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "moduleId": "00000000-0000-0000-0000-000000000000",
+  "title": "Course Notes PDF",
+  "url": "https://example.com/notes.pdf",
+  "type": "PDF"
+}
+
+### Get Modules for a Course
+GET {{HostAddress}}/api/coursemodule/by-course/00000000-0000-0000-0000-000000000000
+Accept: application/json
+
+### ---------------- PROGRESS & CERTIFICATES ---------------- ###
+
+### Mark Lesson as Complete
+POST {{HostAddress}}/api/progress/mark-complete
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "lessonId": "00000000-0000-0000-0000-000000000000"
+}
+
+### Get Course Progress
+GET {{HostAddress}}/api/progress/course/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{authToken}}
+
+### Get Certificate (auto-issued on 100% completion)
+GET {{HostAddress}}/api/progress/certificate/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{authToken}}
+
+
 

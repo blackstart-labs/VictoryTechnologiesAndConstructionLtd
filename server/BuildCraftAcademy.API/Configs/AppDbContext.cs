@@ -11,6 +11,11 @@ namespace BuildCraftAcademy.API.Configs
         }
 
         public DbSet<Course> Courses { get; set; }
+        public DbSet<CourseModule> CourseModules { get; set; }
+        public DbSet<VideoLesson> VideoLessons { get; set; }
+        public DbSet<ResourceLink> ResourceLinks { get; set; }
+        public DbSet<LessonProgress> LessonProgresses { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<PaymentRecord> Payments { get; set; }
@@ -20,8 +25,15 @@ namespace BuildCraftAcademy.API.Configs
         {
             base.OnModelCreating(builder);
 
-            // Configure custom table names or relationships if needed
-            // builder.Entity<ApplicationUser>().ToTable("Users");
+            // Prevent duplicate progress entries per user per lesson
+            builder.Entity<LessonProgress>()
+                .HasIndex(lp => new { lp.UserId, lp.LessonId })
+                .IsUnique();
+
+            // Prevent duplicate certificates per user per course
+            builder.Entity<Certificate>()
+                .HasIndex(c => new { c.UserId, c.CourseId })
+                .IsUnique();
         }
     }
 }
