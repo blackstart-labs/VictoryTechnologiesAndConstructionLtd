@@ -78,6 +78,7 @@ builder.Services.AddScoped<ICmsService, CmsService>();
 builder.Services.AddScoped<ICourseModuleService, CourseModuleService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IJobService, JobService>();
 
 var app = builder.Build();
 
