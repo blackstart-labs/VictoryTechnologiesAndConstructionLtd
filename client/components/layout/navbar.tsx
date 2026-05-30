@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { RiMenuLine, RiCloseLine, RiGraduationCapLine } from "react-icons/ri";
+import { RiMenuLine, RiCloseLine } from "react-icons/ri";
 import { useAuthStore } from "@/stores/auth.store";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +14,7 @@ const navLinks = [
   { label: "Interior", href: "/interior" },
   { label: "Trainings", href: "/courses" },
   { label: "Contact", href: "/contact" },
+  { label: "Career", href: "/career" },
 ];
 
 export function Navbar() {
@@ -23,14 +23,6 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    gsap.fromTo(
-      navRef.current,
-      { y: -80, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
-    );
-  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -52,9 +44,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center transition-transform group-hover:scale-110">
-              <RiGraduationCapLine className="text-primary-foreground text-xl" />
-            </div>
+            <img src="/logo-transparent.png" alt="VTCLBD Logo" className="w-9 h-9 rounded-lg object-contain transition-transform group-hover:scale-110" />
             <span className="font-bold text-lg tracking-tight">
               VTCL<span className="text-primary">BD</span>
             </span>

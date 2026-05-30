@@ -1,17 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
-import { gsap } from "gsap";
 import { RiShieldKeyholeLine, RiLockLine, RiEyeOffLine, RiDatabaseLine } from "react-icons/ri";
 
 export default function PrivacyPage() {
-  useEffect(() => {
-    gsap.fromTo(
-      ".privacy-fade-in > *",
-      { y: 25, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }
-    );
-  }, []);
 
   return (
     <div className="privacy-fade-in max-w-4xl mx-auto px-4 sm:px-6 py-20 space-y-12">

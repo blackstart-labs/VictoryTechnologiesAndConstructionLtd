@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-import { gsap } from "gsap";
+
 import {
   RiCompass3Line,
   RiBuilding4Line,
@@ -48,13 +47,6 @@ const services = [
 ];
 
 export default function AboutPage() {
-  useEffect(() => {
-    gsap.fromTo(
-      ".about-gsap-load > *",
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
-    );
-  }, []);
 
   return (
     <div className="about-gsap-load space-y-24 py-16">

@@ -2,6 +2,7 @@ using System.Security.Claims;
 using VTCLBD.API.Common;
 using VTCLBD.API.DTOs.Progress;
 using VTCLBD.API.Interfaces;
+using VTCLBD.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +14,12 @@ namespace VTCLBD.API.Controllers
     public class ProgressController : ControllerBase
     {
         private readonly IProgressService _progressService;
+        private readonly ICertificateService _certificateService;
 
-        public ProgressController(IProgressService progressService)
+        public ProgressController(IProgressService progressService, ICertificateService certificateService)
         {
             _progressService = progressService;
+            _certificateService = certificateService;
         }
 
         [HttpPost("mark-complete")]
@@ -46,6 +49,34 @@ namespace VTCLBD.API.Controllers
                     "Certificate not yet issued. Complete all modules to earn your certificate."));
 
             return Ok(ApiResponse<CertificateResponseDto?>.SuccessResponse(result, "Certificate retrieved successfully."));
+        }
+
+        [HttpGet("certificate/download/{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DownloadCertificate(Guid id)
+        {
+            var cert = await _progressService.GetCertificateByIdAsync(id);
+            if (cert == null)
+                return NotFound("Certificate not found.");
+
+            try
+            {
+                var payload = new Models.CertificateRequestDto
+                {
+                    RecipientName     = cert.StudentName,
+                    CourseTitle       = cert.CourseTitle,
+                    CertificateNumber = cert.CertificateNumber,
+                    IssuedAt          = cert.IssuedAt
+                };
+
+                var pdfBytes = await _certificateService.GenerateAsync(payload);
+                var filename = $"{cert.StudentName.Replace(" ", "_")}_Certificate.pdf";
+                return File(pdfBytes, "application/pdf", filename);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to generate PDF: {ex.Message}");
+            }
         }
     }
 }

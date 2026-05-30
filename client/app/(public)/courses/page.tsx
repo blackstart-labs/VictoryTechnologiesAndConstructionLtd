@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { gsap } from "gsap";
+
 import { useQuery } from "@tanstack/react-query";
 import {
   RiArrowRightLine,
@@ -24,7 +24,6 @@ function formatPrice(price: number) {
 
 export default function CoursesPage() {
   const [search, setSearch] = useState("");
-  const headerRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["courses"],
@@ -39,33 +38,14 @@ export default function CoursesPage() {
       (c.instructorName ?? "").toLowerCase().includes(search.toLowerCase())
   );
 
-  useEffect(() => {
-    gsap.fromTo(
-      headerRef.current,
-      { y: -30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
-    );
-  }, []);
 
-  useEffect(() => {
-    if (!isLoading && filtered.length > 0) {
-      gsap.fromTo(
-        ".course-card",
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.08, duration: 0.5, ease: "power2.out" }
-      );
-    }
-  }, [isLoading, filtered.length]);
 
   return (
     <div className="min-h-screen pt-24">
       <title>Professional Courses | Victory Design & Construction Ltd</title>
       <meta name="description" content="Unlock expert-led training in civil engineering, architecture, interior design, and construction project management." />
       {/* Header */}
-      <div
-        ref={headerRef}
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-2xl">
           <p className="text-primary text-sm font-semibold uppercase tracking-widest mb-3">
             All Courses

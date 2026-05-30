@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +13,9 @@ import {
   RiCheckDoubleLine,
   RiErrorWarningLine,
   RiEditLine,
-  RiCloseLine
+  RiCloseLine,
+  RiRobotLine,
+  RiSaveLine,
 } from "react-icons/ri";
 import { cmsService } from "@/services/cms.service";
 import type { ContentBlockResponseDto } from "@/types";
@@ -27,6 +29,82 @@ const schema = z.object({
 
 type CmsForm = z.infer<typeof schema>;
 
+// ── AI Chatbot Context editor ────────────────────────────────────────────────
+const AI_IDENTIFIER = "ai-chatbot-context";
+
+function AiChatbotContextEditor() {
+  const queryClient = useQueryClient();
+  const [contextText, setContextText] = useState("");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["cms-chatbot-context"],
+    queryFn: () => cmsService.getByIdentifier(AI_IDENTIFIER),
+  });
+
+  useEffect(() => {
+    if (data?.data?.content) setContextText(data.data.content);
+  }, [data]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (content: string) => {
+      // Try update first; if missing, create it
+      if (data?.data?.id) {
+        return cmsService.update(AI_IDENTIFIER, { content, type: "Text", isActive: true });
+      }
+      return cmsService.create({ identifier: AI_IDENTIFIER, content, type: "Text", isActive: true });
+    },
+    onSuccess: () => {
+      toast.success("AI chatbot context saved! The chatbot will use the new context immediately.");
+      queryClient.invalidateQueries({ queryKey: ["cms-chatbot-context"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-cms"] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  return (
+    <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+          <RiRobotLine className="text-xl" />
+        </div>
+        <div>
+          <h2 className="font-bold text-base">AI Chatbot Knowledge Context</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            This is the knowledge base the AI uses to answer user questions. Keep it accurate and up-to-date.
+          </p>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="h-40 rounded-xl bg-muted animate-pulse" />
+      ) : (
+        <textarea
+          rows={12}
+          value={contextText}
+          onChange={(e) => setContextText(e.target.value)}
+          placeholder="Describe your company: branches, phone numbers, services, courses, pricing…"
+          className="w-full px-4 py-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-y font-mono leading-relaxed text-foreground"
+        />
+      )}
+
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-xs text-muted-foreground">
+          Identifier: <code className="bg-muted px-1.5 py-0.5 rounded text-primary">{AI_IDENTIFIER}</code>
+        </p>
+        <button
+          onClick={() => saveMutation.mutate(contextText)}
+          disabled={saveMutation.isPending || isLoading}
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all shadow-md shadow-primary/10 disabled:opacity-60"
+        >
+          <RiSaveLine />
+          {saveMutation.isPending ? "Saving…" : "Save Context"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Main CMS Admin Page ──────────────────────────────────────────────────────
 export default function AdminCmsPage() {
   const queryClient = useQueryClient();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -37,15 +115,15 @@ export default function AdminCmsPage() {
     defaultValues: { isActive: true, type: "Text" }
   });
 
-  // Query all content blocks (including inactive ones)
   const { data, isLoading } = useQuery({
     queryKey: ["admin-cms"],
     queryFn: () => cmsService.getAll(false),
   });
 
-  const blocks: ContentBlockResponseDto[] = data?.data ?? [];
+  const blocks: ContentBlockResponseDto[] = (data?.data ?? []).filter(
+    (b: ContentBlockResponseDto) => b.identifier !== AI_IDENTIFIER
+  );
 
-  // Create block mutation
   const createMutation = useMutation({
     mutationFn: (data: CmsForm) => cmsService.create(data),
     onSuccess: () => {
@@ -57,9 +135,9 @@ export default function AdminCmsPage() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  // Update block mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: CmsForm }) => cmsService.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: CmsForm }) =>
+      cmsService.update(id, data),
     onSuccess: () => {
       toast.success("CMS Block updated successfully!");
       queryClient.invalidateQueries({ queryKey: ["admin-cms"] });
@@ -69,7 +147,6 @@ export default function AdminCmsPage() {
     onError: (err: Error) => toast.error(err.message),
   });
 
-  // Delete block mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => cmsService.delete(id),
     onSuccess: () => {
@@ -94,7 +171,7 @@ export default function AdminCmsPage() {
         <div>
           <h1 className="text-2xl font-bold">Manage CMS Content</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Dynamic site-wide copy config, Hero headers, Stats, and alert bars.
+            Dynamic site-wide copy config, Hero headers, AI chatbot context, and more.
           </p>
         </div>
         <button
@@ -109,13 +186,16 @@ export default function AdminCmsPage() {
         </button>
       </div>
 
+      {/* ── AI Chatbot Context Editor ──────────────────────────────────────── */}
+      <AiChatbotContextEditor />
+
       {/* Form Modal */}
       {(showAddForm || editingBlock) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
           <form
             onSubmit={handleSubmit((d) => {
               if (editingBlock) {
-                updateMutation.mutate({ id: editingBlock.id, data: d });
+                updateMutation.mutate({ id: editingBlock.identifier, data: d });
               } else {
                 createMutation.mutate(d);
               }
@@ -216,72 +296,74 @@ export default function AdminCmsPage() {
         </div>
       )}
 
-      {/* Blocks List */}
-      {isLoading ? (
-        <div className="space-y-4">
-          {[1, 2].map((i) => (
-            <div key={i} className="rounded-2xl border border-border p-6 flex gap-4 animate-pulse bg-background">
-              <div className="w-12 h-12 rounded-xl bg-muted shrink-0" />
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-muted rounded w-3/4" />
-                <div className="h-3 bg-muted rounded w-1/3" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : blocks.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-12 text-center bg-background max-w-lg mx-auto">
-          <RiSettings4Line className="text-5xl text-muted-foreground/30 mx-auto mb-4" />
-          <h3 className="font-semibold text-lg">No CMS configurations</h3>
-          <p className="text-sm text-muted-foreground">Setup content blocks to drive site copy dynamically.</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {blocks.map((block) => (
-            <div
-              key={block.id}
-              className="rounded-2xl border border-border bg-background p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-primary/30 transition-all"
-            >
-              <div className="flex gap-4 items-center min-w-0">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${block.isActive ? "bg-green-500/10 border-green-500/20 text-green-500" : "bg-muted/80 border-border text-muted-foreground/50"}`}>
-                  {block.isActive ? <RiCheckDoubleLine className="text-xl animate-pulse" /> : <RiErrorWarningLine className="text-lg" />}
+      {/* ── Other CMS Blocks List ──────────────────────────────────────────── */}
+      <div className="space-y-4">
+        <h2 className="text-base font-bold text-foreground">Other Content Blocks</h2>
+        {isLoading ? (
+          <div className="space-y-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="rounded-2xl border border-border p-6 flex gap-4 animate-pulse bg-background">
+                <div className="w-12 h-12 rounded-xl bg-muted shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4" />
+                  <div className="h-3 bg-muted rounded w-1/3" />
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="font-bold text-sm text-foreground truncate">{block.identifier}</h3>
-                    <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border uppercase shrink-0 ${block.isActive ? "bg-green-500/10 border-green-500/25 text-green-500" : "bg-muted border-border text-muted-foreground"}`}>
-                      {block.isActive ? "Active" : "Inactive"}
-                    </span>
+              </div>
+            ))}
+          </div>
+        ) : blocks.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border p-12 text-center bg-background max-w-lg mx-auto">
+            <RiSettings4Line className="text-5xl text-muted-foreground/30 mx-auto mb-4" />
+            <h3 className="font-semibold text-lg">No CMS configurations</h3>
+            <p className="text-sm text-muted-foreground">Setup content blocks to drive site copy dynamically.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {blocks.map((block) => (
+              <div
+                key={block.id}
+                className="rounded-2xl border border-border bg-background p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:border-primary/30 transition-all"
+              >
+                <div className="flex gap-4 items-center min-w-0">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border ${block.isActive ? "bg-green-500/10 border-green-500/20 text-green-500" : "bg-muted/80 border-border text-muted-foreground/50"}`}>
+                    {block.isActive ? <RiCheckDoubleLine className="text-xl animate-pulse" /> : <RiErrorWarningLine className="text-lg" />}
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-1">Type: {block.type}</p>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-sm text-foreground truncate">{block.identifier}</h3>
+                      <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold border uppercase shrink-0 ${block.isActive ? "bg-green-500/10 border-green-500/25 text-green-500" : "bg-muted border-border text-muted-foreground"}`}>
+                        {block.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-1">Type: {block.type}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/60 justify-end">
+                  <button
+                    onClick={() => handleEditClick(block)}
+                    className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/5 border border-border hover:border-primary/20 rounded-xl transition-all"
+                    title="Edit CMS Block"
+                  >
+                    <RiEditLine className="text-base" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm("Are you sure you want to delete this CMS content block?")) {
+                        deleteMutation.mutate(block.identifier);
+                      }
+                    }}
+                    className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 border border-border hover:border-destructive/20 rounded-xl transition-all"
+                    title="Delete Block"
+                  >
+                    <RiDeleteBinLine className="text-base" />
+                  </button>
                 </div>
               </div>
-
-              {/* Actions */}
-              <div className="flex gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/60 justify-end">
-                <button
-                  onClick={() => handleEditClick(block)}
-                  className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/5 border border-border hover:border-primary/20 rounded-xl transition-all"
-                  title="Edit CMS Block"
-                >
-                  <RiEditLine className="text-base" />
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm("Are you sure you want to delete this CMS content block?")) {
-                      deleteMutation.mutate(block.id);
-                    }
-                  }}
-                  className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/5 border border-border hover:border-destructive/20 rounded-xl transition-all"
-                  title="Delete Block"
-                >
-                  <RiDeleteBinLine className="text-base" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

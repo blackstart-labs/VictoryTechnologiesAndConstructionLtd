@@ -25,10 +25,17 @@ namespace VTCLBD.API.Controllers
         }
 
         [HttpGet("{identifier}")]
-        public async Task<ActionResult<ApiResponse<ContentBlockResponseDto>>> GetByIdentifier(string identifier)
+        public async Task<ActionResult<ApiResponse<ContentBlockResponseDto?>>> GetByIdentifier(string identifier)
         {
-            var result = await _cmsService.GetContentBlockByIdentifierAsync(identifier);
-            return Ok(ApiResponse<ContentBlockResponseDto>.SuccessResponse(result));
+            try
+            {
+                var result = await _cmsService.GetContentBlockByIdentifierAsync(identifier);
+                return Ok(ApiResponse<ContentBlockResponseDto>.SuccessResponse(result));
+            }
+            catch (VTCLBD.API.Common.Exceptions.NotFoundException)
+            {
+                return Ok(ApiResponse<ContentBlockResponseDto?>.SuccessResponse(null));
+            }
         }
 
         [Authorize(Roles = "Admin")]

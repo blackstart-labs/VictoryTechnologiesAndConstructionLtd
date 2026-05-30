@@ -18,6 +18,7 @@ import {
 } from "react-icons/ri";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const adminNavItems = [
   { label: "Overview", href: "/admin", icon: RiDashboardLine },
@@ -63,8 +64,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="h-16 flex items-center px-6 border-b border-border shrink-0">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-              <RiGraduationCapLine className="text-primary-foreground text-base" />
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img
+                src="/logo-transparent.png"
+                alt="Logo"
+                className="w-10 h-10 object-contain"
+              />
             </div>
             <span className="font-bold text-sm tracking-tight text-foreground">
               VTCLBD<span className="text-primary">Admin</span>

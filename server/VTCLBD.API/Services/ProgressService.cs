@@ -132,6 +132,28 @@ namespace VTCLBD.API.Services
             };
         }
 
+        public async Task<CertificateResponseDto?> GetCertificateByIdAsync(Guid id)
+        {
+            var cert = await _context.Certificates
+                .Include(c => c.User)
+                .Include(c => c.Course)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (cert == null) return null;
+
+            return new CertificateResponseDto
+            {
+                Id = cert.Id,
+                CertificateNumber = cert.CertificateNumber,
+                StudentName = cert.User?.FullName ?? string.Empty,
+                CourseTitle = cert.Course?.Title ?? string.Empty,
+                IssuedAt = cert.IssuedAt,
+                CertificateUrl = !string.IsNullOrEmpty(cert.CertificateUrl) 
+                    ? cert.CertificateUrl 
+                    : $"https://res.cloudinary.com/dniosv5ot/image/upload/v1779370284/certificate_mockup.png"
+            };
+        }
+
         // ── Private: Auto-issue Certificate ─────────────────────────────────────
 
         private async Task TryIssueCertificateAsync(string userId, Guid courseId)

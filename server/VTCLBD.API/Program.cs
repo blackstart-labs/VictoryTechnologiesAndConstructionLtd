@@ -71,6 +71,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 // Register Dependencies
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<JwtHelper>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
@@ -81,7 +82,7 @@ builder.Services.AddScoped<ICmsService, CmsService>();
 builder.Services.AddScoped<ICourseModuleService, CourseModuleService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IJobService, JobService>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
 
 var app = builder.Build();
 

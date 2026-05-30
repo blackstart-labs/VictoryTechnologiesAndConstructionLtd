@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { gsap } from "gsap";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -30,14 +29,6 @@ export default function ContactPage() {
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ContactForm>({
     resolver: zodResolver(schema),
   });
-
-  useEffect(() => {
-    gsap.fromTo(
-      ".contact-gsap-load > *",
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.8, stagger: 0.12, ease: "power3.out" }
-    );
-  }, []);
 
   const onSubmit = async (data: ContactForm) => {
     // Mock API request

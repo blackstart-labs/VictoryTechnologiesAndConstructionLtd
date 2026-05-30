@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { gsap } from "gsap";
+
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,7 +48,6 @@ export default function CourseDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { isAuthenticated, user } = useAuthStore();
-  const heroRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: courseData, isLoading } = useQuery({
@@ -119,20 +118,7 @@ export default function CourseDetailPage() {
     enrollMutation.mutate(data);
   };
 
-  useEffect(() => {
-    if (!course) return;
-    gsap.fromTo(heroRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" });
-  }, [course]);
 
-  useEffect(() => {
-    if (modules && modules.length > 0) {
-      gsap.fromTo(
-        ".module-item",
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, stagger: 0.07, duration: 0.4, ease: "power2.out", delay: 0.1 }
-      );
-    }
-  }, [modules]);
 
   if (isLoading) {
     return (
@@ -158,7 +144,6 @@ export default function CourseDetailPage() {
       <title>{`${course.title} | Victory Design & Construction Ltd`}</title>
       <meta name="description" content={course.description || "Learn from industry experts at Victory Design & Construction Ltd."} />
       <div
-        ref={heroRef}
         className="border-b border-border"
         style={{
           background:

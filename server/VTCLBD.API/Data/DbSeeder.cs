@@ -32,6 +32,22 @@ namespace VTCLBD.API.Data
                     await roleManager.CreateAsync(new IdentityRole(role));
             }
 
+            // Ensure ai-chatbot-context CMS ContentBlock exists
+            var chatbotBlock = await context.ContentBlocks.FirstOrDefaultAsync(b => b.Identifier == "ai-chatbot-context");
+            if (chatbotBlock == null)
+            {
+                context.ContentBlocks.Add(new ContentBlock
+                {
+                    Id = Guid.NewGuid(),
+                    Identifier = "ai-chatbot-context",
+                    Content = "Victory Design & Construction (VTCLBD) is a leading architectural design and structural consultancy firm in Bangladesh.\n\nBranches:\n- Main Branch: Eastern Kamalapur Complex, 2nd Floor, Room No 206, Kamalapur, Dhaka 1000.\n- Branch Office: Madhya Bazar, Chandina, Cumilla.\n\nContacts:\n- Phone: +88 01779481486, +88 01868785980\n- Email: victorydesign72@gmail.com\n\nServices Offered:\n1. Architectural Design\n2. Structural Design\n3. Interior Design\n4. Construction Management\n5. Engineering Consultancy\n6. Project Supervision\n7. Estimation & Costing\n8. Renovation & Space Planning\n\nAcademy Courses:\n- Modern Interior Design Mastery (BDT 4,999) - Learn residential and commercial design, AutoCAD, 3ds Max, V-Ray, and site management.\n- Structural Engineering & Revit (BDT 5,999) - Revit workflows, ETABS analysis, and structural detailing.\n- Site Engineering and Supervision (BDT 3,500) - Field supervision, calculations, and safety rules.",
+                    Type = "Text",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                });
+                await context.SaveChangesAsync();
+            }
+
             // ── Admin User ────────────────────────────────────────────────────────
             const string adminEmail = "admin@vtclbd.com";
             if (await userManager.FindByEmailAsync(adminEmail) == null)
@@ -311,6 +327,7 @@ namespace VTCLBD.API.Data
                 new() { Id = Guid.NewGuid(), Identifier = "stats-courses", Content = "15+", Type = "Text", IsActive = true, CreatedAt = DateTime.UtcNow },
                 new() { Id = Guid.NewGuid(), Identifier = "stats-projects", Content = "50+", Type = "Text", IsActive = true, CreatedAt = DateTime.UtcNow },
                 new() { Id = Guid.NewGuid(), Identifier = "stats-instructors", Content = "10+", Type = "Text", IsActive = true, CreatedAt = DateTime.UtcNow },
+                new() { Id = Guid.NewGuid(), Identifier = "ai-chatbot-context", Content = "Victory Design & Construction (VTCLBD) is a leading architectural design and structural consultancy firm in Bangladesh.\n\nBranches:\n- Main Branch: Eastern Kamalapur Complex, 2nd Floor, Room No 206, Kamalapur, Dhaka 1000.\n- Branch Office: Madhya Bazar, Chandina, Cumilla.\n\nContacts:\n- Phone: +88 01779481486, +88 01868785980\n- Email: victorydesign72@gmail.com\n\nServices Offered:\n1. Architectural Design\n2. Structural Design\n3. Interior Design\n4. Construction Management\n5. Engineering Consultancy\n6. Project Supervision\n7. Estimation & Costing\n8. Renovation & Space Planning\n\nAcademy Courses:\n- Modern Interior Design Mastery (BDT 4,999) - Learn residential and commercial design, AutoCAD, 3ds Max, V-Ray, and site management.\n- Structural Engineering & Revit (BDT 5,999) - Revit workflows, ETABS analysis, and structural detailing.\n- Site Engineering and Supervision (BDT 3,500) - Field supervision, calculations, and safety rules.", Type = "Text", IsActive = true, CreatedAt = DateTime.UtcNow },
             });
 
             await context.SaveChangesAsync();

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { gsap } from "gsap";
 import { jobService } from "@/services/job.service";
 import type { JobResponseDto } from "@/types";
 import {
@@ -42,17 +41,6 @@ export default function CareerPage() {
   // Extract unique departments and types for filters
   const departments = ["All", ...Array.from(new Set(jobs.map((j) => j.department)))];
   const jobTypes = ["All", ...Array.from(new Set(jobs.map((j) => j.jobType)))];
-
-  // GSAP animations when jobs are loaded
-  useEffect(() => {
-    if (!isLoading && filteredJobs.length > 0) {
-      gsap.fromTo(
-        ".job-card-anim",
-        { opacity: 0, y: 35 },
-        { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, ease: "power3.out" }
-      );
-    }
-  }, [isLoading, filteredJobs.length]);
 
   return (
     <div className="space-y-16 py-16 min-h-screen bg-background">

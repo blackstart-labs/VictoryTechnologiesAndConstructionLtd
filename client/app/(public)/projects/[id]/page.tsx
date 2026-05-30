@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { gsap } from "gsap";
+
 import {
   RiArrowLeftLine,
   RiBuildingLine,
@@ -22,7 +22,6 @@ import { projectService } from "@/services/project.service";
 
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const contentRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -39,7 +38,6 @@ export default function ProjectDetailPage() {
   useEffect(() => {
     if (project) {
       setActiveImage(project.imageUrl || "");
-      gsap.fromTo(contentRef.current, { opacity: 0, y: 35 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" });
     }
   }, [project]);
 
@@ -127,7 +125,7 @@ export default function ProjectDetailPage() {
       </div>
 
       {/* Hero Showcase (Interactive Gallery + Description) */}
-      <div ref={contentRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Left Side: Images Gallery */}

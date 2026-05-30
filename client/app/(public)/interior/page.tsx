@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { gsap } from "gsap";
+
 import { useQuery } from "@tanstack/react-query";
 import { RiArrowRightLine, RiBuildingLine, RiSearchLine, RiMapPinLine, RiPaletteLine } from "react-icons/ri";
 import { projectService } from "@/services/project.service";
@@ -10,7 +10,6 @@ import type { ProjectResponseDto } from "@/types";
 
 export default function InteriorPage() {
   const [search, setSearch] = useState("");
-  const headerRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
@@ -29,19 +28,7 @@ export default function InteriorPage() {
     return isDesign && matchesSearch;
   });
 
-  useEffect(() => {
-    gsap.fromTo(headerRef.current, { y: -30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" });
-  }, []);
 
-  useEffect(() => {
-    if (!isLoading && filtered.length > 0) {
-      gsap.fromTo(
-        ".interior-card",
-        { y: 40, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.08, duration: 0.5, ease: "power2.out" }
-      );
-    }
-  }, [isLoading, filtered.length, search]);
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -60,7 +47,7 @@ export default function InteriorPage() {
   return (
     <div className="min-h-screen pt-24 bg-[#FAFAFA]">
       {/* Header section */}
-      <div ref={headerRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary">
             <RiPaletteLine className="text-sm" />

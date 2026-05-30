@@ -50,7 +50,7 @@ export default function LoginPage() {
         <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
           <RiGraduationCapLine className="text-primary-foreground text-xl" />
         </div>
-        <span className="font-bold text-lg">BuildCraft<span className="text-primary">Academy</span></span>
+        <span className="font-bold text-lg">Victory<span className="text-primary">Technologies & Construction Ltd.</span></span>
       </div>
 
       <div>

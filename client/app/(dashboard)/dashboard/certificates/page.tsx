@@ -51,7 +51,7 @@ function CertificateRow({ course }: { course: CourseResponseDto }) {
         {isCompleted ? (
           cert?.certificateUrl ? (
             <a
-              href={cert.certificateUrl}
+              href={`${process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5240/api"}/progress/certificate/download/${cert.id}`}
               target="_blank"
               rel="noreferrer"
               className="w-full md:w-auto px-5 py-2.5 rounded-xl bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition-all shadow-md shadow-amber-500/10 flex items-center justify-center gap-1.5"

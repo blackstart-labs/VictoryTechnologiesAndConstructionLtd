@@ -8,6 +8,7 @@ const footerLinks = {
     { label: "Interior", href: "/interior" },
     { label: "About Us", href: "/about" },
     { label: "Contact", href: "/contact" },
+    { label: "Career", href: "/career" },
   ],
   Account: [
     { label: "Login", href: "/auth/login" },

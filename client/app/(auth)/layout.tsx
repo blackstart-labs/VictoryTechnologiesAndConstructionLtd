@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex">
@@ -12,10 +14,15 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         />
         <div className="relative z-10 flex flex-col justify-between p-12 w-full">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center">
-              <span className="text-white text-lg font-bold">B</span>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center">
+              <Image
+                src="/logo-transparent.png"
+                alt="Logo"
+                width={100}
+                height={100}
+              />
             </div>
-            <span className="text-white font-bold text-lg tracking-tight">BuildCraft Academy</span>
+            <span className="text-white font-bold text-lg tracking-tight">Victory Technologies & Construction Ltd.</span>
           </div>
           <div className="space-y-6">
             <h2 className="text-4xl font-bold text-white leading-tight">
