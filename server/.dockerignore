@@ -1,0 +1,17 @@
+# Ignore build outputs
+**/bin/
+**/obj/
+
+# Ignore IDE and OS files
+**/.vs/
+**/.idea/
+**/.vscode/
+**/*.user
+**/*.suo
+**/*.log
+.DS_Store
+Thumbs.db
+
+# Ignore environment/secret files
+**/.env*
+**/appsettings.Development.json
