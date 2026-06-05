@@ -178,9 +178,33 @@ app.UseHttpsRedirection();
 // Enable CORS
 app.UseCors(options =>
 {
-    options.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>())
-           .AllowAnyHeader()
-           .AllowAnyMethod();
+    var origins = new List<string>();
+    var originsString = builder.Configuration["Cors:AllowedOrigins"];
+    if (!string.IsNullOrEmpty(originsString))
+    {
+        origins.AddRange(originsString.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+    }
+    else
+    {
+        var originsArray = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+        if (originsArray != null)
+        {
+            origins.AddRange(originsArray);
+        }
+    }
+
+    if (origins.Count > 0)
+    {
+        options.WithOrigins(origins.ToArray())
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    }
+    else
+    {
+        options.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    }
 });
 
 // Security Headers Middleware
