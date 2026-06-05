@@ -13,7 +13,31 @@ using Asp.Versioning;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
 
+// Load environment variables from .env.local or .env if they exist
+var envPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), ".env.local");
+if (!System.IO.File.Exists(envPath))
+{
+    envPath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), ".env");
+}
+if (System.IO.File.Exists(envPath))
+{
+    foreach (var line in System.IO.File.ReadAllLines(envPath))
+    {
+        if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#")) continue;
+        var parts = line.Split('=', 2);
+        if (parts.Length == 2)
+        {
+            var envKey = parts[0].Trim();
+            var envVal = parts[1].Trim();
+            if (envVal.StartsWith("\"") && envVal.EndsWith("\"")) envVal = envVal[1..^1];
+            if (envVal.StartsWith("'") && envVal.EndsWith("'")) envVal = envVal[1..^1];
+            Environment.SetEnvironmentVariable(envKey, envVal);
+        }
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Configure lowercase routes
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -105,7 +129,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 // Configure Cloudinary
-builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 
 // Register Dependencies
 builder.Services.AddHttpClient();
@@ -129,12 +153,14 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
+        var context = services.GetRequiredService<AppDbContext>();
+        await context.Database.MigrateAsync();
         await VTCLBD.API.Data.DbSeeder.SeedAsync(services);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database.");
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
     }
 }
 
