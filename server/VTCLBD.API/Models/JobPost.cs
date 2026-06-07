@@ -22,7 +22,7 @@ namespace VTCLBD.API.Models
 
         [Required]
         [MaxLength(50)]
-        public string JobType { get; set; } = string.Empty; // Full-time, Part-time, Internship
+        public string JobType { get; set; } = string.Empty; // Full-time, Part-time, Remote, Internship
 
         [Required]
         public string Description { get; set; } = string.Empty;

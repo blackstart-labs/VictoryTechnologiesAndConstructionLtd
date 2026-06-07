@@ -167,12 +167,19 @@ export default function AdminCareersPage() {
               {/* Department */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">Department</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Engineering, Architecture, Interior"
+                <select
                   {...register("department")}
                   className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
-                />
+                >
+                  <option value="">Select Department</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Architecture">Architecture</option>
+                  <option value="Interior Design">Interior Design</option>
+                  <option value="Construction Management">Construction Management</option>
+                  <option value="Administration">Administration</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Operations">Operations</option>
+                </select>
                 {errors.department && <p className="text-xs text-destructive">{errors.department.message}</p>}
               </div>
 
@@ -195,8 +202,10 @@ export default function AdminCareersPage() {
                   {...register("jobType")}
                   className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
                 >
+                  <option value="">Select Job Type</option>
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
+                  <option value="Remote">Remote</option>
                   <option value="Contract">Contract</option>
                   <option value="Internship">Internship</option>
                 </select>
