@@ -204,8 +204,22 @@ export default function HomePage() {
     queryFn: () => projectService.getAll(true),
   });
 
+  const { data: feedbacksData } = useQuery({
+    queryKey: ["all-feedbacks"],
+    queryFn: () => courseService.getPublicFeedbacksAll(),
+  });
+
   const courses: CourseResponseDto[] = coursesData?.data?.slice(0, 3) ?? [];
   const projects: ProjectResponseDto[] = projectsData?.data?.slice(0, 3) ?? [];
+  const dbFeedbacks = feedbacksData?.data ?? [];
+
+  const displayStudentFeedbacks = dbFeedbacks.length > 0
+    ? dbFeedbacks.map((f) => ({
+        name: f.userFullName,
+        role: f.courseTitle,
+        text: f.comment,
+      }))
+    : studentFeedbacks;
 
   // Auto-rotate Hero Slide
   useEffect(() => {
@@ -542,13 +556,13 @@ export default function HomePage() {
                 </div>
                 <div className="flex gap-1.5">
                   <button
-                    onClick={() => setStudentFeedbackIdx((prev) => (prev - 1 + studentFeedbacks.length) % studentFeedbacks.length)}
+                    onClick={() => setStudentFeedbackIdx((prev) => (prev - 1 + displayStudentFeedbacks.length) % displayStudentFeedbacks.length)}
                     className="p-1.5 rounded-lg border border-border hover:bg-muted text-xs transition-all"
                   >
                     <RiArrowLeftLine />
                   </button>
                   <button
-                    onClick={() => setStudentFeedbackIdx((prev) => (prev + 1) % studentFeedbacks.length)}
+                    onClick={() => setStudentFeedbackIdx((prev) => (prev + 1) % displayStudentFeedbacks.length)}
                     className="p-1.5 rounded-lg border border-border hover:bg-muted text-xs transition-all"
                   >
                     <RiArrowRightLine />
@@ -559,15 +573,15 @@ export default function HomePage() {
               <div className="min-h-[160px] rounded-3xl border border-border bg-card p-6 relative flex flex-col justify-between shadow-sm">
                 <RiDoubleQuotesL className="text-3xl text-primary/30 absolute top-4 left-4" />
                 <p className="text-xs text-muted-foreground leading-relaxed italic pt-4 pl-4 relative z-10">
-                  {studentFeedbacks[studentFeedbackIdx].text}
+                  {displayStudentFeedbacks[studentFeedbackIdx]?.text}
                 </p>
                 <div className="flex items-center gap-3 border-t border-border/60 pt-4 mt-4">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs">
-                    {studentFeedbacks[studentFeedbackIdx].name.charAt(0)}
+                    {displayStudentFeedbacks[studentFeedbackIdx]?.name.charAt(0)}
                   </div>
                   <div>
-                    <h5 className="font-bold text-xs text-heading">{studentFeedbacks[studentFeedbackIdx].name}</h5>
-                    <p className="text-[10px] text-muted-foreground">{studentFeedbacks[studentFeedbackIdx].role}</p>
+                    <h5 className="font-bold text-xs text-heading">{displayStudentFeedbacks[studentFeedbackIdx]?.name}</h5>
+                    <p className="text-[10px] text-muted-foreground">{displayStudentFeedbacks[studentFeedbackIdx]?.role}</p>
                   </div>
                 </div>
               </div>

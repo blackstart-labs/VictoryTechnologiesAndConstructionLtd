@@ -1,8 +1,17 @@
 import axios from "axios";
 import { useAuthStore } from "@/stores/auth.store";
 
+let baseURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5240/api";
+
+if (typeof window !== "undefined") {
+  const hostname = window.location.hostname;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    baseURL = "http://localhost:5240/api";
+  }
+}
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5237/api",
+  baseURL,
   headers: { "Content-Type": "application/json" },
 });
 

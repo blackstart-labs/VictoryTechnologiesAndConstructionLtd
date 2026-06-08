@@ -14,6 +14,9 @@ import {
   RiFileTextLine,
   RiMedalLine,
   RiArrowRightLine,
+  RiStarFill,
+  RiStarLine,
+  RiCloseLine,
 } from "react-icons/ri";
 import { courseService } from "@/services/course.service";
 import { progressService } from "@/services/progress.service";
@@ -24,6 +27,29 @@ export default function LearnPage() {
   const queryClient = useQueryClient();
 
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
+  
+  // Feedback states
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState("");
+
+  const submitFeedbackMutation = useMutation({
+    mutationFn: (data: { rating: number; comment: string }) =>
+      courseService.submitFeedback({
+        courseId,
+        rating: data.rating,
+        comment: data.comment,
+      }),
+    onSuccess: (res) => {
+      toast.success(res.message || "Thank you! Your feedback is pending verification.");
+      setIsFeedbackModalOpen(false);
+      setComment("");
+      setRating(5);
+    },
+    onError: (err: any) => {
+      toast.error(err.response?.data?.message || err.message || "Failed to submit feedback");
+    },
+  });
 
   // Fetch Course details
   const { data: courseRes, isLoading: courseLoading } = useQuery({
@@ -138,6 +164,13 @@ export default function LearnPage() {
               {progress?.completedLessons}/{progress?.totalLessons} Completed
             </div>
           )}
+
+          <button
+            onClick={() => setIsFeedbackModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-border bg-card hover:bg-muted text-xs font-bold text-foreground transition-all shadow-sm shrink-0"
+          >
+            <RiStarFill className="text-amber-500" /> Share Feedback
+          </button>
         </div>
       </header>
 
@@ -290,6 +323,79 @@ export default function LearnPage() {
         </div>
 
       </div>
+
+      {/* Feedback Submission Modal */}
+      {isFeedbackModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="relative w-full max-w-md bg-background rounded-3xl border border-border shadow-2xl p-6 sm:p-8 animate-in fade-in zoom-in-95 duration-200">
+            {/* Close Button */}
+            <button
+              onClick={() => setIsFeedbackModalOpen(false)}
+              className="absolute right-4 top-4 p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <RiCloseLine className="text-xl" />
+            </button>
+
+            {/* Modal Header */}
+            <div className="mb-6 space-y-1.5">
+              <h3 className="text-lg font-bold text-heading">Course Feedback</h3>
+              <p className="text-xs text-muted-foreground">
+                We'd love to hear your thoughts on <span className="font-semibold text-foreground">{course.title}</span>.
+              </p>
+            </div>
+
+            {/* Star Selector */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Overall Rating
+                </label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setRating(star)}
+                      className="text-2xl transition-transform hover:scale-110"
+                    >
+                      {star <= rating ? (
+                        <RiStarFill className="text-amber-500" />
+                      ) : (
+                        <RiStarLine className="text-muted-foreground/30" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Comment text-area */}
+              <div>
+                <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                  Your Review / Comment
+                </label>
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Share your learning experience, what you liked, or areas for improvement..."
+                  rows={4}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs resize-none"
+                />
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  disabled={submitFeedbackMutation.isPending || !comment.trim()}
+                  onClick={() => submitFeedbackMutation.mutate({ rating, comment })}
+                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-md disabled:opacity-60 text-xs"
+                >
+                  {submitFeedbackMutation.isPending ? "Submitting..." : "Submit Review"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

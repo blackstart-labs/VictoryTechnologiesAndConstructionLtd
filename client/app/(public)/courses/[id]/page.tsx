@@ -20,7 +20,9 @@ import {
   RiFileTextLine,
   RiLockLine,
   RiCloseLine,
-  RiShieldCheckLine
+  RiShieldCheckLine,
+  RiStarFill,
+  RiStarLine
 } from "react-icons/ri";
 import { courseService } from "@/services/course.service";
 import { paymentService } from "@/services/progress.service";
@@ -86,6 +88,14 @@ export default function CourseDetailPage() {
     queryFn: () => courseService.getModules(id),
     enabled: !!id,
   });
+
+  const { data: feedbacksData } = useQuery({
+    queryKey: ["course-feedbacks", id],
+    queryFn: () => courseService.getPublicFeedbacks(id),
+    enabled: !!id,
+  });
+
+  const feedbacks = feedbacksData?.data ?? [];
 
   const course = courseData?.data;
   const modules = modulesData?.data ?? [];
@@ -335,6 +345,50 @@ export default function CourseDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Course Reviews */}
+      {feedbacks.length > 0 && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-border mt-8">
+          <div className="max-w-3xl space-y-8">
+            <div>
+              <p className="text-primary text-xs font-semibold uppercase tracking-wider mb-2">Student Feedback</p>
+              <h2 className="text-2xl font-extrabold text-[#1A1A1A]">Reviews & Experiences</h2>
+            </div>
+            
+            <div className="space-y-6">
+              {feedbacks.map((f) => (
+                <div key={f.id} className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                        {f.userFullName.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-[#1A1A1A]">{f.userFullName}</h4>
+                        <p className="text-[10px] text-muted-foreground">{new Date(f.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-0.5">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <RiStarFill
+                          key={star}
+                          className={`text-sm ${
+                            star <= f.rating ? "text-amber-500" : "text-muted-foreground/20"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-relaxed italic">
+                    "{f.comment}"
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Manual Payment/Enrollment Modal */}
       {isModalOpen && (

@@ -1,5 +1,5 @@
 import api from "@/lib/api";
-import type { ApiResponse, CourseResponseDto, ModuleResponseDto } from "@/types";
+import type { ApiResponse, CourseResponseDto, ModuleResponseDto, FeedbackResponseDto, CreateFeedbackDto } from "@/types";
 
 export const courseService = {
   getAll: (publishedOnly = true) =>
@@ -49,4 +49,20 @@ export const courseService = {
 
   deleteResourceLink: (id: string) =>
     api.delete<ApiResponse<boolean>>(`/coursemodule/resources/${id}`).then((r) => r.data),
+
+  // Feedback Operations
+  submitFeedback: (data: CreateFeedbackDto) =>
+    api.post<ApiResponse<FeedbackResponseDto>>("/coursefeedback", data).then((r) => r.data),
+
+  getPublicFeedbacks: (courseId: string) =>
+    api.get<ApiResponse<FeedbackResponseDto[]>>(`/coursefeedback/course/${courseId}`).then((r) => r.data),
+
+  getPublicFeedbacksAll: () =>
+    api.get<ApiResponse<FeedbackResponseDto[]>>("/coursefeedback/public").then((r) => r.data),
+
+  getAdminFeedbacks: () =>
+    api.get<ApiResponse<FeedbackResponseDto[]>>("/coursefeedback/admin").then((r) => r.data),
+
+  updateFeedbackSentiment: (id: string, sentiment: string) =>
+    api.put<ApiResponse<FeedbackResponseDto>>(`/coursefeedback/admin/${id}/sentiment`, { sentiment }).then((r) => r.data),
 };

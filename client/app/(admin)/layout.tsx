@@ -15,6 +15,7 @@ import {
   RiShieldCheckLine,
   RiUserLine,
   RiBriefcaseLine,
+  RiDoubleQuotesL,
 } from "react-icons/ri";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -25,6 +26,7 @@ const adminNavItems = [
   { label: "Verify Payments", href: "/admin/payments", icon: RiShieldCheckLine },
   { label: "Manage Courses", href: "/admin/courses", icon: RiBookOpenLine },
   { label: "Manage Projects", href: "/admin/projects", icon: RiBuildingLine },
+  { label: "Manage Reviews", href: "/admin/feedbacks", icon: RiDoubleQuotesL },
   { label: "Manage Careers", href: "/admin/careers", icon: RiBriefcaseLine },
   { label: "Manage CMS", href: "/admin/cms", icon: RiSettings4Line },
   { label: "Manage Users", href: "/admin/users", icon: RiUserLine },

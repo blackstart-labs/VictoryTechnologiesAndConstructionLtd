@@ -50,6 +50,25 @@ export interface CourseResponseDto {
   updatedAt?: string;
 }
 
+export interface FeedbackResponseDto {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  userId: string;
+  userFullName: string;
+  userEmail: string;
+  comment: string;
+  rating: number;
+  sentiment: string;
+  createdAt: string;
+}
+
+export interface CreateFeedbackDto {
+  courseId: string;
+  comment: string;
+  rating: number;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Course Modules & Lessons
 // ─────────────────────────────────────────────────────────────────────────────
