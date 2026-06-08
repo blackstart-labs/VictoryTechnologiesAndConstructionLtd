@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using VTCLBD.API.Common.Exceptions;
 using VTCLBD.API.Configs;
 using VTCLBD.API.DTOs.Course;
@@ -16,37 +21,37 @@ namespace VTCLBD.API.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<CourseResponseDto>> GetAllCoursesAsync(bool publishedOnly = false)
+        public async Task<IEnumerable<CourseResponseDto>> GetAllCoursesAsync(bool publishedOnly = false, CancellationToken cancellationToken = default)
         {
-            var query = _context.Courses.AsQueryable();
+            var query = _context.Courses.AsNoTracking().AsQueryable();
 
             if (publishedOnly)
             {
                 query = query.Where(c => c.IsPublished);
             }
 
-            var courses = await query.Select(c => new CourseResponseDto
-            {
-                Id = c.Id,
-                Title = c.Title,
-                Description = c.Description,
-                Price = c.Price,
-                VideoUrl = c.VideoUrl,
-                InstructorName = c.InstructorName,
-                IsPublished = c.IsPublished,
-                CreatedAt = c.CreatedAt,
-                UpdatedAt = c.UpdatedAt
-            }).ToListAsync();
+            var courses = await query.Select(c => new CourseResponseDto(
+                c.Id,
+                c.Title,
+                c.Description,
+                c.Price,
+                c.VideoUrl,
+                c.InstructorName,
+                c.IsPublished,
+                c.CreatedAt,
+                c.UpdatedAt
+            )).ToListAsync(cancellationToken);
 
             return courses;
         }
 
-        public async Task<IEnumerable<CourseResponseDto>> GetEnrolledCoursesAsync(string userId)
+        public async Task<IEnumerable<CourseResponseDto>> GetEnrolledCoursesAsync(string userId, CancellationToken cancellationToken = default)
         {
             var enrolledCourseIds = await _context.Enrollments
+                .AsNoTracking()
                 .Where(e => e.UserId == userId && e.IsActive)
                 .Select(e => e.CourseId)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             if (enrolledCourseIds.Count == 0)
             {
@@ -54,43 +59,44 @@ namespace VTCLBD.API.Services
             }
 
             return await _context.Courses
+                .AsNoTracking()
                 .Where(c => enrolledCourseIds.Contains(c.Id))
-                .Select(c => new CourseResponseDto
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    Price = c.Price,
-                    VideoUrl = c.VideoUrl,
-                    InstructorName = c.InstructorName,
-                    IsPublished = c.IsPublished,
-                    CreatedAt = c.CreatedAt,
-                    UpdatedAt = c.UpdatedAt
-                }).ToListAsync();
+                .Select(c => new CourseResponseDto(
+                    c.Id,
+                    c.Title,
+                    c.Description,
+                    c.Price,
+                    c.VideoUrl,
+                    c.InstructorName,
+                    c.IsPublished,
+                    c.CreatedAt,
+                    c.UpdatedAt
+                )).ToListAsync(cancellationToken);
         }
 
-        public async Task<CourseResponseDto> GetCourseByIdAsync(Guid id)
+        public async Task<CourseResponseDto> GetCourseByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.Courses
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
             if (course == null)
                 throw new NotFoundException("Course not found.");
 
-            return new CourseResponseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                Price = course.Price,
-                VideoUrl = course.VideoUrl,
-                InstructorName = course.InstructorName,
-                IsPublished = course.IsPublished,
-                CreatedAt = course.CreatedAt,
-                UpdatedAt = course.UpdatedAt
-            };
+            return new CourseResponseDto(
+                course.Id,
+                course.Title,
+                course.Description,
+                course.Price,
+                course.VideoUrl,
+                course.InstructorName,
+                course.IsPublished,
+                course.CreatedAt,
+                course.UpdatedAt
+            );
         }
 
-        public async Task<CourseResponseDto> CreateCourseAsync(CreateCourseDto request)
+        public async Task<CourseResponseDto> CreateCourseAsync(CreateCourseDto request, CancellationToken cancellationToken = default)
         {
             var course = new Course
             {
@@ -101,28 +107,29 @@ namespace VTCLBD.API.Services
                 VideoPublicId = request.VideoPublicId,
                 InstructorName = request.InstructorName,
                 IsPublished = request.IsPublished,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeOffset.UtcNow
             };
 
             _context.Courses.Add(course);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
-            return new CourseResponseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                Price = course.Price,
-                VideoUrl = course.VideoUrl,
-                InstructorName = course.InstructorName,
-                IsPublished = course.IsPublished,
-                CreatedAt = course.CreatedAt
-            };
+            return new CourseResponseDto(
+                course.Id,
+                course.Title,
+                course.Description,
+                course.Price,
+                course.VideoUrl,
+                course.InstructorName,
+                course.IsPublished,
+                course.CreatedAt,
+                course.UpdatedAt
+            );
         }
 
-        public async Task<CourseResponseDto> UpdateCourseAsync(Guid id, UpdateCourseDto request)
+        public async Task<CourseResponseDto> UpdateCourseAsync(Guid id, UpdateCourseDto request, CancellationToken cancellationToken = default)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.Courses
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
             if (course == null)
                 throw new NotFoundException("Course not found.");
@@ -135,34 +142,34 @@ namespace VTCLBD.API.Services
             if (request.InstructorName != null) course.InstructorName = request.InstructorName;
             if (request.IsPublished.HasValue) course.IsPublished = request.IsPublished.Value;
 
-            course.UpdatedAt = DateTime.UtcNow;
+            course.UpdatedAt = DateTimeOffset.UtcNow;
 
             _context.Courses.Update(course);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
-            return new CourseResponseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                Price = course.Price,
-                VideoUrl = course.VideoUrl,
-                InstructorName = course.InstructorName,
-                IsPublished = course.IsPublished,
-                CreatedAt = course.CreatedAt,
-                UpdatedAt = course.UpdatedAt
-            };
+            return new CourseResponseDto(
+                course.Id,
+                course.Title,
+                course.Description,
+                course.Price,
+                course.VideoUrl,
+                course.InstructorName,
+                course.IsPublished,
+                course.CreatedAt,
+                course.UpdatedAt
+            );
         }
 
-        public async Task<bool> DeleteCourseAsync(Guid id)
+        public async Task<bool> DeleteCourseAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.Courses
+                .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
             if (course == null)
                 throw new NotFoundException("Course not found.");
 
             _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return true;
         }

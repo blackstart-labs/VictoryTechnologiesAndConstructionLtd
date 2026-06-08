@@ -2,20 +2,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VTCLBD.API.DTOs.Course
 {
-    public class CreateCourseDto
+    public sealed record CreateCourseDto
     {
         [Required]
-        public string Title { get; set; } = string.Empty;
+        public string Title { get; init; } = string.Empty;
 
         [Required]
-        public string Description { get; set; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
 
-        public decimal Price { get; set; }
+        public decimal Price { get; init; }
 
-        public string? VideoUrl { get; set; }
-        public string? VideoPublicId { get; set; }
+        public string? VideoUrl { get; init; }
+        public string? VideoPublicId { get; init; }
 
-        public string? InstructorName { get; set; }
-        public bool IsPublished { get; set; } = true;
+        public string? InstructorName { get; init; }
+        public bool IsPublished { get; init; } = true;
     }
 }

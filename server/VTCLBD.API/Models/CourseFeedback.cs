@@ -28,6 +28,6 @@ namespace VTCLBD.API.Models
         [Required]
         public string Sentiment { get; set; } = "Pending";
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     }
 }

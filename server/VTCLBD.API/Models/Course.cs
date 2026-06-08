@@ -21,8 +21,8 @@ namespace VTCLBD.API.Models
 
         public bool IsPublished { get; set; } = true;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset? UpdatedAt { get; set; }
 
         public ICollection<CourseModule> Modules { get; set; } = new List<CourseModule>();
     }

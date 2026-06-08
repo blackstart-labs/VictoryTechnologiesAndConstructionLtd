@@ -29,3 +29,27 @@ notes.md
 
 env
 graphify-out/
+.graphifyignore
+
+# Ignore docs during extraction to bypass LLM extraction step
+docs/
+client/docs/
+server/docs/
+*.md
+**/*.md
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.gif
+**/*.svg
+**/*.webp
+**/*.mp4
+**/*.pdf
+
+docs/*
+README.md
+Software Requirements Specification (SRS).md
+TODO.md
+PROMPT.md
+client/README.md
+node_modules

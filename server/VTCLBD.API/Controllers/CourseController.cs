@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 using VTCLBD.API.Common;
 using VTCLBD.API.DTOs.Course;
 using VTCLBD.API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace VTCLBD.API.Controllers
@@ -19,53 +24,75 @@ namespace VTCLBD.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<CourseResponseDto>>>> GetAllCourses([FromQuery] bool publishedOnly = false)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse<IEnumerable<CourseResponseDto>>))]
+        public async Task<ActionResult<ApiResponse<IEnumerable<CourseResponseDto>>>> GetAllCourses(
+            [FromQuery] bool publishedOnly = false,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _courseService.GetAllCoursesAsync(publishedOnly);
+            var result = await _courseService.GetAllCoursesAsync(publishedOnly, cancellationToken);
             return Ok(ApiResponse<IEnumerable<CourseResponseDto>>.SuccessResponse(result));
         }
 
         [Authorize]
         [HttpGet("enrolled")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<CourseResponseDto>>>> GetEnrolledCourses()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse<IEnumerable<CourseResponseDto>>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(ApiResponse<object>))]
+        public async Task<ActionResult<ApiResponse<IEnumerable<CourseResponseDto>>>> GetEnrolledCourses(
+            CancellationToken cancellationToken = default)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized(ApiResponse<object>.FailureResponse("User ID not found in token."));
 
-            var result = await _courseService.GetEnrolledCoursesAsync(userId);
+            var result = await _courseService.GetEnrolledCoursesAsync(userId, cancellationToken);
             return Ok(ApiResponse<IEnumerable<CourseResponseDto>>.SuccessResponse(result));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<CourseResponseDto>>> GetCourseById(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse<CourseResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ApiResponse<object>))]
+        public async Task<ActionResult<ApiResponse<CourseResponseDto>>> GetCourseById(
+            Guid id,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _courseService.GetCourseByIdAsync(id);
+            var result = await _courseService.GetCourseByIdAsync(id, cancellationToken);
             return Ok(ApiResponse<CourseResponseDto>.SuccessResponse(result));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<CourseResponseDto>>> CreateCourse([FromBody] CreateCourseDto request)
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ApiResponse<CourseResponseDto>))]
+        public async Task<ActionResult<ApiResponse<CourseResponseDto>>> CreateCourse(
+            [FromBody] CreateCourseDto request,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _courseService.CreateCourseAsync(request);
+            var result = await _courseService.CreateCourseAsync(request, cancellationToken);
             var response = ApiResponse<CourseResponseDto>.SuccessResponse(result, "Course created successfully.");
             return CreatedAtAction(nameof(GetCourseById), new { id = result.Id }, response);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<CourseResponseDto>>> UpdateCourse(Guid id, [FromBody] UpdateCourseDto request)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse<CourseResponseDto>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ApiResponse<object>))]
+        public async Task<ActionResult<ApiResponse<CourseResponseDto>>> UpdateCourse(
+            Guid id,
+            [FromBody] UpdateCourseDto request,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _courseService.UpdateCourseAsync(id, request);
+            var result = await _courseService.UpdateCourseAsync(id, request, cancellationToken);
             return Ok(ApiResponse<CourseResponseDto>.SuccessResponse(result, "Course updated successfully."));
         }
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApiResponse<bool>>> DeleteCourse(Guid id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ApiResponse<bool>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ApiResponse<object>))]
+        public async Task<ActionResult<ApiResponse<bool>>> DeleteCourse(
+            Guid id,
+            CancellationToken cancellationToken = default)
         {
-            var result = await _courseService.DeleteCourseAsync(id);
+            var result = await _courseService.DeleteCourseAsync(id, cancellationToken);
             return Ok(ApiResponse<bool>.SuccessResponse(result, "Course deleted successfully."));
         }
     }
