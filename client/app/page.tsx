@@ -30,6 +30,15 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+function getCourseImage(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("autocad")) return "/course_autocad.png";
+  if (t.includes("revit")) return "/course_revit.png";
+  if (t.includes("interior")) return "/course_interior.png";
+  if (t.includes("structural") || t.includes("etabs")) return "/hero_structural.png";
+  return "/hero_construction.png";
+}
+
 const stats = [
   { label: "Completed Projects", value: "50+", icon: RiBuildingLine },
   { label: "Running Projects", value: "12+", icon: RiServiceLine },
@@ -401,12 +410,23 @@ export default function HomePage() {
                   href={`/courses/${course.id}`}
                   className="card-3d hover-border-glow group rounded-3xl border border-border bg-card overflow-hidden transition-all duration-300 flex flex-col"
                 >
-                  <div className="card-3d-content h-44 bg-gradient-to-br from-primary/15 via-primary/5 to-transparent flex items-center justify-center shrink-0">
-                    <RiGraduationCapLine className="text-5xl text-primary/30 group-hover:text-primary/50 transition-colors" />
+                  {/* Thumbnail */}
+                  <div className="card-3d-content h-44 relative overflow-hidden bg-muted shrink-0">
+                    <img
+                      src={getCourseImage(course.title)}
+                      alt={course.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/25 transition-colors duration-300" />
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="px-2.5 py-1 rounded-full bg-primary/95 text-primary-foreground text-[10px] font-bold shadow-md">
+                        {formatPrice(course.price)}
+                      </span>
+                    </div>
                   </div>
                   <div className="card-3d-content p-5 flex-1 flex flex-col justify-between space-y-4">
                     <div className="space-y-2">
-                      <span className="text-[10px] text-muted-foreground font-bold uppercase">{course.instructorName}</span>
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase">{course.instructorName || "Victory Design & Construction Team"}</span>
                       <h3 className="font-bold text-xs sm:text-sm text-heading leading-snug group-hover:text-primary transition-colors line-clamp-1">
                         {course.title}
                       </h3>
