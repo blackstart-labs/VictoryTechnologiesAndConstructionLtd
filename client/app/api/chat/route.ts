@@ -11,34 +11,51 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ text });
     }
 
-    try {
-      const geminiRes = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-          }),
+    const models = [
+      "gemini-3.1-flash-lite",
+      "gemini-3.5-flash",
+      "gemini-2.5-flash-lite",
+      "gemini-2.0-flash-lite-001"
+    ];
+
+    let text = "";
+    let apiSuccess = false;
+
+    for (const model of models) {
+      try {
+        const geminiRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+            }),
+          }
+        );
+
+        if (geminiRes.ok) {
+          const geminiData = await geminiRes.json();
+          const candidateText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (candidateText) {
+            text = candidateText;
+            apiSuccess = true;
+            break;
+          }
+        } else {
+          const errText = await geminiRes.text();
+          console.warn(`Gemini API error for model ${model}:`, errText);
         }
-      );
-
-      if (geminiRes.ok) {
-        const geminiData = await geminiRes.json();
-        const text =
-          geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ??
-          getLocalFallbackResponse(message || "", context || "");
-        return NextResponse.json({ text });
+      } catch (apiErr) {
+        console.warn(`Failed to reach Gemini API for model ${model}:`, apiErr);
       }
-
-      const errText = await geminiRes.text();
-      console.warn("Gemini API error (falling back to local context parser):", errText);
-    } catch (apiErr) {
-      console.warn("Failed to reach Gemini API (falling back to local context parser):", apiErr);
     }
 
-    // Fall back to rule-based parser on any external API failure
-    const text = getLocalFallbackResponse(message || "", context || "");
+    if (!apiSuccess) {
+      console.warn("All Gemini models failed. Falling back to local intelligence.");
+      text = getLocalFallbackResponse(message || "", context || "");
+    }
+
     return NextResponse.json({ text });
   } catch (err) {
     console.error("Chat route error:", err);
