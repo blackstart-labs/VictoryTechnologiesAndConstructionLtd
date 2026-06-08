@@ -19,6 +19,7 @@ import {
   RiVolumeMuteLine
 } from "react-icons/ri";
 import { projectService } from "@/services/project.service";
+import { VideoPlayer } from "@/components/video-player";
 
 const getYouTubeEmbedUrl = (url: string) => {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -40,9 +41,6 @@ const getVimeoEmbedUrl = (url: string) => {
 
 export default function InteriorDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [activeImage, setActiveImage] = useState<string>("");
 
   const { data, isLoading } = useQuery({
@@ -95,23 +93,7 @@ export default function InteriorDetailPage() {
     ? [project.imageUrl]
     : [];
 
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      videoRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch(err => console.log("Video play failed:", err));
-    }
-  };
 
-  const toggleMute = () => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
-  };
 
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -304,48 +286,7 @@ export default function InteriorDetailPage() {
                   }
 
                   return (
-                    <>
-                      <video
-                        ref={videoRef}
-                        src={project.videoUrl}
-                        preload="metadata"
-                        controlsList="nodownload"
-                        disablePictureInPicture
-                        onContextMenu={(e) => e.preventDefault()}
-                        onClick={togglePlay}
-                        className="w-full h-full object-cover cursor-pointer"
-                      />
-
-                      {/* Overlay Play/Pause Button */}
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/10 group-hover:bg-black/30 transition-all">
-                        {!isPlaying && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              togglePlay();
-                            }}
-                            className="w-14 h-14 rounded-full bg-primary/95 text-primary-foreground flex items-center justify-center shadow-lg transition-transform hover:scale-110 pointer-events-auto"
-                          >
-                            <RiPlayFill className="text-3xl pl-1" />
-                          </button>
-                        )}
-                      </div>
-
-                      {/* Custom Video Controls Panel (Styled, prevents downloading) */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="flex items-center gap-3">
-                          <button onClick={togglePlay} className="hover:text-primary transition-colors">
-                            {isPlaying ? <RiPauseFill className="text-xl" /> : <RiPlayFill className="text-xl" />}
-                          </button>
-                          <button onClick={toggleMute} className="hover:text-primary transition-colors">
-                            {isMuted ? <RiVolumeMuteLine className="text-xl" /> : <RiVolumeUpLine className="text-xl" />}
-                          </button>
-                        </div>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-black/60 px-2.5 py-1 rounded border border-primary/30">
-                          VTCLBD Player
-                        </span>
-                      </div>
-                    </>
+                    <VideoPlayer videoUrl={project.videoUrl} title={project.title} />
                   );
                 })()}
               </div>

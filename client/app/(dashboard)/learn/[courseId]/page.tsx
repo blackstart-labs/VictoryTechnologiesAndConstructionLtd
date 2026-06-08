@@ -20,6 +20,7 @@ import {
 } from "react-icons/ri";
 import { courseService } from "@/services/course.service";
 import { progressService } from "@/services/progress.service";
+import { VideoPlayer } from "@/components/video-player";
 
 export default function LearnPage() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -182,26 +183,11 @@ export default function LearnPage() {
           {activeLesson ? (
             <>
               {/* Premium Video Embed */}
-              <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-border shadow-xl group">
-                <video
-                  key={activeLesson.id}
-                  src={activeLesson.videoUrl}
-                  controls
-                  controlsList="nodownload"
-                  disablePictureInPicture
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="w-full h-full object-cover"
-                />
-                {/* <video
-                  key={activeLesson.id}
-                  src={activeLesson.videoUrl || "https://res.cloudinary.com/dniosv5ot/video/upload/v1779370284/engineers_roeyve.mp4"}
-                  controls
-                  controlsList="nodownload"
-                  disablePictureInPicture
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="w-full h-full object-cover"
-                /> */}
-              </div>
+              <VideoPlayer
+                key={activeLesson.id}
+                videoUrl={activeLesson.videoUrl}
+                title={activeLesson.title}
+              />
 
               {/* Title & mark complete button */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
