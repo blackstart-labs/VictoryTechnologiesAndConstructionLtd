@@ -20,6 +20,24 @@ import {
 } from "react-icons/ri";
 import { projectService } from "@/services/project.service";
 
+const getYouTubeEmbedUrl = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  if (match && match[2].length === 11) {
+    return `https://www.youtube.com/embed/${match[2]}?autoplay=0&rel=0`;
+  }
+  return null;
+};
+
+const getVimeoEmbedUrl = (url: string) => {
+  const regExp = /vimeo\.com\/(?:video\/)?([0-9]+)/;
+  const match = url.match(regExp);
+  if (match) {
+    return `https://player.vimeo.com/video/${match[1]}`;
+  }
+  return null;
+};
+
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -257,50 +275,85 @@ export default function ProjectDetailPage() {
               <h2 className="text-2xl font-extrabold text-[#1A1A1A]">Video Walkthrough</h2>
               
               <div className="relative rounded-2xl border border-border/80 overflow-hidden bg-black shadow-md aspect-video group">
-                <video
-                  ref={videoRef}
-                  src={project.videoUrl}
-                  preload="metadata"
-                  controlsList="nodownload"
-                  disablePictureInPicture
-                  onContextMenu={(e) => e.preventDefault()}
-                  onClick={togglePlay}
-                  className="w-full h-full object-cover cursor-pointer"
-                />
+                {(() => {
+                  const ytUrl = getYouTubeEmbedUrl(project.videoUrl);
+                  const vimeoUrl = getVimeoEmbedUrl(project.videoUrl);
 
-                {/* Overlay Play/Pause Button */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/10 group-hover:bg-black/30 transition-all">
-                  {!isPlaying && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        togglePlay();
-                      }}
-                      className="w-14 h-14 rounded-full bg-primary/95 text-primary-foreground flex items-center justify-center shadow-lg transition-transform hover:scale-110 pointer-events-auto"
-                    >
-                      <RiPlayFill className="text-3xl pl-1" />
-                    </button>
-                  )}
-                </div>
+                  if (ytUrl) {
+                    return (
+                      <iframe
+                        src={ytUrl}
+                        className="w-full h-full object-cover"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title={project.title}
+                      />
+                    );
+                  }
 
-                {/* Custom Video Controls Panel (Styled, prevents downloading) */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="flex items-center gap-3">
-                    <button onClick={togglePlay} className="hover:text-primary transition-colors">
-                      {isPlaying ? <RiPauseFill className="text-xl" /> : <RiPlayFill className="text-xl" />}
-                    </button>
-                    <button onClick={toggleMute} className="hover:text-primary transition-colors">
-                      {isMuted ? <RiVolumeMuteLine className="text-xl" /> : <RiVolumeUpLine className="text-xl" />}
-                    </button>
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-black/60 px-2.5 py-1 rounded border border-primary/30">
-                    VTCLBD Player
-                  </span>
-                </div>
+                  if (vimeoUrl) {
+                    return (
+                      <iframe
+                        src={vimeoUrl}
+                        className="w-full h-full object-cover"
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen
+                        title={project.title}
+                      />
+                    );
+                  }
+
+                  return (
+                    <>
+                      <video
+                        ref={videoRef}
+                        src={project.videoUrl}
+                        preload="metadata"
+                        controlsList="nodownload"
+                        disablePictureInPicture
+                        onContextMenu={(e) => e.preventDefault()}
+                        onClick={togglePlay}
+                        className="w-full h-full object-cover cursor-pointer"
+                      />
+
+                      {/* Overlay Play/Pause Button */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/10 group-hover:bg-black/30 transition-all">
+                        {!isPlaying && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              togglePlay();
+                            }}
+                            className="w-14 h-14 rounded-full bg-primary/95 text-primary-foreground flex items-center justify-center shadow-lg transition-transform hover:scale-110 pointer-events-auto"
+                          >
+                            <RiPlayFill className="text-3xl pl-1" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Custom Video Controls Panel (Styled, prevents downloading) */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="flex items-center gap-3">
+                          <button onClick={togglePlay} className="hover:text-primary transition-colors">
+                            {isPlaying ? <RiPauseFill className="text-xl" /> : <RiPlayFill className="text-xl" />}
+                          </button>
+                          <button onClick={toggleMute} className="hover:text-primary transition-colors">
+                            {isMuted ? <RiVolumeMuteLine className="text-xl" /> : <RiVolumeUpLine className="text-xl" />}
+                          </button>
+                        </div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary bg-black/60 px-2.5 py-1 rounded border border-primary/30">
+                          VTCLBD Player
+                        </span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
-              <p className="text-xs text-muted-foreground text-center">
-                * Note: Video download has been disabled to protect copyright and media licensing.
-              </p>
+              {!getYouTubeEmbedUrl(project.videoUrl) && !getVimeoEmbedUrl(project.videoUrl) && (
+                <p className="text-xs text-muted-foreground text-center">
+                  * Note: Video download has been disabled to protect copyright and media licensing.
+                </p>
+              )}
             </div>
           )}
         </div>

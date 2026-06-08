@@ -25,6 +25,7 @@ const schema = z.object({
   clientName: z.string().optional(),
   location: z.string().optional(),
   imageUrl: z.string().optional(),
+  videoUrl: z.string().url("Must be a valid URL").or(z.literal("")).optional(),
   isPublished: z.boolean(),
 });
 
@@ -37,7 +38,7 @@ export default function AdminProjectsPage() {
 
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ProjectForm>({
     resolver: zodResolver(schema),
-    defaultValues: { isPublished: false }
+    defaultValues: { isPublished: false, category: "Design", videoUrl: "" }
   });
 
   // Fetch all projects (including draft/unpublished)
@@ -90,6 +91,7 @@ export default function AdminProjectsPage() {
     setValue("clientName", project.clientName || "");
     setValue("location", project.location || "");
     setValue("imageUrl", project.imageUrl || "");
+    setValue("videoUrl", project.videoUrl || "");
     setValue("isPublished", project.isPublished);
   };
 
@@ -159,12 +161,13 @@ export default function AdminProjectsPage() {
               {/* Category */}
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground">Category</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Commercial Construction"
+                <select
                   {...register("category")}
-                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                />
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
+                >
+                  <option value="Design">Design</option>
+                  <option value="Construction">Construction</option>
+                </select>
                 {errors.category && <p className="text-xs text-destructive">{errors.category.message}</p>}
               </div>
 
@@ -175,7 +178,7 @@ export default function AdminProjectsPage() {
                   type="text"
                   placeholder="e.g. Dhaka, Bangladesh"
                   {...register("location")}
-                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
                 />
               </div>
 
@@ -186,7 +189,7 @@ export default function AdminProjectsPage() {
                   type="text"
                   placeholder="e.g. Ananta Group"
                   {...register("clientName")}
-                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
                 />
               </div>
 
@@ -197,8 +200,20 @@ export default function AdminProjectsPage() {
                   type="text"
                   placeholder="https://images.unsplash.com/..."
                   {...register("imageUrl")}
-                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
                 />
+              </div>
+
+              {/* Video URL */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground">Video URL</label>
+                <input
+                  type="text"
+                  placeholder="https://www.youtube.com/watch?v=... or direct link"
+                  {...register("videoUrl")}
+                  className="w-full px-3 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
+                />
+                {errors.videoUrl && <p className="text-xs text-destructive">{errors.videoUrl.message}</p>}
               </div>
 
               {/* Publish Toggle */}
@@ -207,7 +222,7 @@ export default function AdminProjectsPage() {
                   id="isPublished"
                   type="checkbox"
                   {...register("isPublished")}
-                  className="w-4 h-4 text-primary border-border rounded focus:ring-primary/20"
+                  className="w-4 h-4 text-primary border-border rounded focus:ring-primary/20 cursor-pointer"
                 />
                 <label htmlFor="isPublished" className="text-xs font-semibold text-muted-foreground cursor-pointer">
                   Publish immediately
