@@ -12,6 +12,9 @@ import {
   RiLightbulbLine,
   RiMapPinLine,
   RiBriefcaseLine,
+  RiLinkedinBoxFill,
+  RiMailLine,
+  RiUser3Line,
 } from "react-icons/ri";
 
 const values = [
@@ -46,6 +49,41 @@ const services = [
   "Project Supervision",
   "Estimation & Costing",
   "Renovation & Space Planning"
+];
+
+const team = [
+  {
+    name: "Engr. Md. Maruf Ahmed",
+    role: "Founder & Managing Director",
+    specialty: "Structural & Civil Engineering",
+    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
+    linkedin: "#",
+    email: "maruf@vtclbd.com"
+  },
+  {
+    name: "Ar. Tasnim Rahman",
+    role: "Chief Architect",
+    specialty: "Modern Architecture & Planning",
+    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
+    linkedin: "#",
+    email: "tasnim@vtclbd.com"
+  },
+  {
+    name: "Engr. Naimul Islam",
+    role: "Lead Construction Manager",
+    specialty: "Site Operations & Safety",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
+    linkedin: "#",
+    email: "naimul@vtclbd.com"
+  },
+  {
+    name: "Sarah Chowdhury",
+    role: "Head of Interior Design",
+    specialty: "Residential & Commercial Styling",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
+    linkedin: "#",
+    email: "sarah@vtclbd.com"
+  }
 ];
 
 export default function AboutPage() {
@@ -183,6 +221,81 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Team Members Section ─────────────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
+          <div className="flex justify-center items-center gap-3">
+            <div className="h-1 w-6 bg-primary/80 rounded-full" />
+            <span className="text-xs font-bold text-primary uppercase tracking-widest">Our Professionals</span>
+            <div className="h-1 w-6 bg-primary/80 rounded-full" />
+          </div>
+          <h2 className="text-3xl font-extrabold text-heading">Meet Our Expert Team</h2>
+          <p className="text-sm text-muted-foreground">
+            A dedicated group of architects, engineers, and project specialists collaborating to bring your visions to life.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {team.map((member, i) => (
+            <div
+              key={i}
+              className="group rounded-3xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all hover:shadow-xl shadow-sm duration-300"
+            >
+              {/* Image with zoom effect */}
+              <div className="relative aspect-[4/5] bg-muted overflow-hidden">
+                {member.image ? (
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
+                    <RiUser3Line className="text-6xl" />
+                  </div>
+                )}
+                {/* Overlay social actions */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6 gap-3">
+                  {member.linkedin && (
+                    <a
+                      href={member.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-xl bg-white/10 hover:bg-primary text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 shadow-lg"
+                      title="LinkedIn"
+                    >
+                      <RiLinkedinBoxFill className="text-lg" />
+                    </a>
+                  )}
+                  {member.email && (
+                    <a
+                      href={`mailto:${member.email}`}
+                      className="w-10 h-10 rounded-xl bg-white/10 hover:bg-primary text-white flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 shadow-lg"
+                      title="Email"
+                    >
+                      <RiMailLine className="text-lg" />
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Info panel */}
+              <div className="p-5 space-y-1.5 text-center">
+                <h3 className="font-extrabold text-sm text-heading truncate group-hover:text-primary transition-colors">
+                  {member.name}
+                </h3>
+                <p className="text-xs font-bold text-primary uppercase tracking-wide">
+                  {member.role}
+                </p>
+                <p className="text-[11px] text-muted-foreground font-medium">
+                  {member.specialty}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
