@@ -102,6 +102,23 @@ export default function CourseDetailPage() {
   const totalLessons = modules.reduce((s, m) => s + m.videoLessons.length, 0);
   const totalDuration = modules.reduce((s, m) => s + m.videoLessons.reduce((a, v) => a + v.durationInSeconds, 0), 0);
 
+  const formatDurationText = (totalSeconds: number): string => {
+    const totalMinutes = Math.round(totalSeconds / 60);
+    if (totalMinutes <= 0) return "0m content";
+
+    const days = Math.floor(totalMinutes / (24 * 60));
+    const remainingMinutesAfterDays = totalMinutes % (24 * 60);
+    const hours = Math.floor(remainingMinutesAfterDays / 60);
+    const minutes = remainingMinutesAfterDays % 60;
+
+    const parts = [];
+    if (days > 0) parts.push(`${days}d`);
+    if (hours > 0) parts.push(`${hours}h`);
+    if (minutes > 0) parts.push(`${minutes}m`);
+
+    return parts.join(" ") + " content";
+  };
+
   const {
     register,
     handleSubmit,
@@ -222,7 +239,7 @@ export default function CourseDetailPage() {
                 </span>
                 <span className="flex items-center gap-1.5 font-medium">
                   <RiTimeLine className="text-primary text-base" />
-                  {Math.round(totalDuration / 60)} min content
+                  {formatDurationText(totalDuration)}
                 </span>
                 <span className="flex items-center gap-1.5 font-medium">
                   <RiCheckboxCircleLine className="text-primary text-base" />
@@ -253,7 +270,7 @@ export default function CourseDetailPage() {
                 <ul className="space-y-3 text-sm text-muted-foreground pt-2">
                   {[
                     `${totalLessons} video lessons`,
-                    `${Math.round(totalDuration / 60)} min content`,
+                    formatDurationText(totalDuration),
                     "Practical resource templates",
                     "Official Training Certificate",
                     "Lifetime classroom access"
