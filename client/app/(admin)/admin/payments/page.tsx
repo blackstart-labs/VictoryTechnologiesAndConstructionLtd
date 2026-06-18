@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
@@ -10,12 +11,17 @@ import {
   RiMailLine,
   RiPhoneLine,
   RiExchangeLine,
-  RiMoneyDollarCircleLine
+  RiCoinsLine,
+  RiArrowGoBackLine,
+  RiLoader2Line,
 } from "react-icons/ri";
 import { paymentService } from "@/services/progress.service";
 
+type TabType = "pending" | "approved" | "refunded";
+
 export default function AdminPaymentsPage() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState<TabType>("pending");
 
   // Fetch all payment records for verification
   const { data, isLoading } = useQuery({
@@ -24,6 +30,11 @@ export default function AdminPaymentsPage() {
   });
 
   const payments = data?.data ?? [];
+
+  // Sort latest transactions at the top
+  const sortedPayments = [...payments].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   // Mutation to approve enrollment payment
   const approveMutation = useMutation({
@@ -34,11 +45,23 @@ export default function AdminPaymentsPage() {
     },
     onError: (err: Error) => {
       toast.error(err.message || "Failed to approve payment verification.");
-    }
+    },
+  });
+
+  // Mutation to refund payment
+  const refundMutation = useMutation({
+    mutationFn: (id: string) => paymentService.refundPayment(id),
+    onSuccess: (res) => {
+      toast.success(res.message || "Payment status marked as Refunded and enrollment removed.");
+      queryClient.invalidateQueries({ queryKey: ["admin-payments-history"] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to process refund.");
+    },
   });
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT", maximumFractionDigits: 0 }).format(price);
+    return `${price.toLocaleString("en-US")} TK`;
   };
 
   const getStatusBadge = (status: string) => {
@@ -50,10 +73,10 @@ export default function AdminPaymentsPage() {
             <RiCheckboxCircleLine className="text-sm" /> Verified
           </span>
         );
-      case "rejected":
+      case "refunded":
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-red-200 bg-red-50 text-red-700 text-xs font-bold">
-            <RiTimeLine className="text-sm" /> Rejected
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-200 bg-blue-50 text-blue-700 text-xs font-bold">
+            <RiArrowGoBackLine className="text-sm" /> Refunded
           </span>
         );
       case "pending":
@@ -66,14 +89,29 @@ export default function AdminPaymentsPage() {
     }
   };
 
+  // Filter payments by Tab
+  const filteredPayments = sortedPayments.filter((p: any) => {
+    const status = p.status?.toLowerCase();
+    if (activeTab === "pending") {
+      return status === "pending";
+    }
+    if (activeTab === "approved") {
+      return status === "success" || status === "approved";
+    }
+    if (activeTab === "refunded") {
+      return status === "refunded";
+    }
+    return false;
+  });
+
   return (
     <div className="p-6 lg:p-8 space-y-8 bg-[#FAFAFA] min-h-screen">
       {/* Title */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A1A]">Manual Enrollment Approval</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A1A]">Payment & Enrollment Management</h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Review and verify student manual payments (bKash/Nagad/Bank Transfer) to activate course enrollment.
+            Review manual transactions, verify student course fees, and manage refunds.
           </p>
         </div>
         <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary font-bold text-xs flex items-center gap-1.5 shadow-sm">
@@ -81,27 +119,56 @@ export default function AdminPaymentsPage() {
         </div>
       </div>
 
+      {/* Tabs Switcher */}
+      <div className="flex border-b border-border gap-6">
+        {(["pending", "approved", "refunded"] as TabType[]).map((tab) => {
+          const count = sortedPayments.filter((p) => {
+            const status = p.status?.toLowerCase();
+            if (tab === "pending") return status === "pending";
+            if (tab === "approved") return status === "success" || status === "approved";
+            if (tab === "refunded") return status === "refunded";
+            return false;
+          }).length;
+
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`pb-4 px-1 text-sm font-bold border-b-2 transition-all capitalize flex items-center gap-2 ${
+                activeTab === tab
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <span>{tab === "pending" ? "Pending Approval" : tab}</span>
+              <span
+                className={`text-xs px-2 py-0.5 rounded-full ${
+                  activeTab === tab
+                    ? "bg-primary/10 text-primary"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Content list */}
       <div className="rounded-2xl border border-border/80 bg-background shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-border/80 bg-muted/20 shrink-0">
-          <h3 className="font-bold text-sm text-foreground">Pending & Past Transactions</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Matching Transaction IDs with payments submitted from the enrollment portal.
-          </p>
-        </div>
-
         {isLoading ? (
           <div className="p-12 space-y-4">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="h-16 w-full bg-muted/40 rounded-xl animate-pulse" />
             ))}
           </div>
-        ) : payments.length === 0 ? (
+        ) : filteredPayments.length === 0 ? (
           <div className="p-16 flex flex-col items-center justify-center text-center max-w-md mx-auto space-y-3">
-            <RiExchangeLine className="text-5xl text-muted-foreground/30 animate-spin" />
-            <h3 className="font-bold text-lg text-foreground">No payment requests found</h3>
+            <RiExchangeLine className="text-5xl text-muted-foreground/30" />
+            <h3 className="font-bold text-lg text-foreground">No transaction records</h3>
             <p className="text-xs text-muted-foreground">
-              When students make manual transfers and fill out the enrollment form, the list will update automatically.
+              No payments match this status filter at this time.
             </p>
           </div>
         ) : (
@@ -118,7 +185,7 @@ export default function AdminPaymentsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
-                {payments.map((payment: any) => (
+                {filteredPayments.map((payment: any) => (
                   <tr key={payment.id} className="hover:bg-muted/10 transition-colors">
                     {/* Student Name & Email */}
                     <td className="p-4 space-y-1">
@@ -136,7 +203,7 @@ export default function AdminPaymentsPage() {
                     <td className="p-4 space-y-1 font-semibold text-foreground">
                       <div className="line-clamp-1">{payment.courseTitle || "Professional Training"}</div>
                       <div className="flex items-center gap-1 text-[10px] text-primary font-bold">
-                        <RiMoneyDollarCircleLine className="text-sm" />
+                        <RiCoinsLine className="text-sm text-primary shrink-0" />
                         {formatPrice(payment.amount || 0)}
                       </div>
                     </td>
@@ -162,19 +229,45 @@ export default function AdminPaymentsPage() {
                       {getStatusBadge(payment.status)}
                     </td>
 
-                    {/* Action Button */}
+                    {/* Action Buttons */}
                     <td className="p-4 text-center">
-                      {payment.status?.toLowerCase() !== "success" && payment.status?.toLowerCase() !== "approved" ? (
-                        <button
-                          disabled={approveMutation.isPending}
-                          onClick={() => approveMutation.mutate(payment.id)}
-                          className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-sm shadow-primary/15 disabled:opacity-60"
-                        >
-                          {approveMutation.isPending ? "Processing..." : "Approve"}
-                        </button>
-                      ) : (
-                        <span className="text-xs text-muted-foreground font-medium italic">Completed</span>
-                      )}
+                      <div className="flex items-center justify-center gap-2">
+                        {payment.status?.toLowerCase() === "pending" && (
+                          <button
+                            disabled={approveMutation.isPending}
+                            onClick={() => approveMutation.mutate(payment.id)}
+                            className="px-4 py-2 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-sm shadow-primary/15 disabled:opacity-60 flex items-center gap-1"
+                          >
+                            {approveMutation.isPending && (
+                              <RiLoader2Line className="animate-spin text-sm" />
+                            )}
+                            Approve
+                          </button>
+                        )}
+
+                        {(payment.status?.toLowerCase() === "success" ||
+                          payment.status?.toLowerCase() === "approved") && (
+                          <button
+                            disabled={refundMutation.isPending}
+                            onClick={() => {
+                              if (confirm("Are you sure you want to mark this transaction as refunded? This will revoke the student's course access.")) {
+                                refundMutation.mutate(payment.id);
+                              }
+                            }}
+                            className="px-4 py-2 rounded-xl bg-red-500 hover:bg-red-600 text-white font-bold transition-all shadow-sm disabled:opacity-60 flex items-center gap-1"
+                          >
+                            {refundMutation.isPending && (
+                              <RiLoader2Line className="animate-spin text-sm" />
+                            )}
+                            <RiArrowGoBackLine className="text-sm" />
+                            Refund
+                          </button>
+                        )}
+
+                        {payment.status?.toLowerCase() === "refunded" && (
+                          <span className="text-xs text-muted-foreground font-medium italic">Refunded</span>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

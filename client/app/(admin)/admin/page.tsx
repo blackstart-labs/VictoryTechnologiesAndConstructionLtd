@@ -14,7 +14,7 @@ import {
   RiTeamLine,
   RiShieldCheckLine,
   RiBriefcaseLine,
-  RiMoneyDollarCircleLine,
+  RiCoinsLine,
   RiCheckboxCircleLine,
   RiTimeLine,
   RiErrorWarningLine,
@@ -76,9 +76,9 @@ export default function AdminDashboardPage() {
   const stats = [
     {
       label: "Total Revenue",
-      value: `৳${totalRevenue.toLocaleString()}`,
+      value: `${totalRevenue.toLocaleString()} TK`,
       loading: paymentsLoading,
-      icon: RiMoneyDollarCircleLine,
+      icon: RiCoinsLine,
       color: "text-green-500 bg-green-500/10 border-green-500/20",
     },
     {

@@ -15,7 +15,7 @@ import {
   RiEditLine,
   RiCloseLine,
   RiMapPinLine,
-  RiMoneyDollarCircleLine,
+  RiCoinsLine,
 } from "react-icons/ri";
 import { jobService } from "@/services/job.service";
 import type { JobResponseDto } from "@/types";
@@ -338,7 +338,7 @@ export default function AdminCareersPage() {
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mt-1">
                     <span className="font-semibold text-primary">{job.department}</span>
                     <span className="flex items-center gap-1"><RiMapPinLine /> {job.location}</span>
-                    <span className="flex items-center gap-1"><RiMoneyDollarCircleLine /> {job.salaryRange}</span>
+                    <span className="flex items-center gap-1"><RiCoinsLine /> {job.salaryRange}</span>
                   </div>
                 </div>
               </div>

@@ -84,5 +84,13 @@ namespace VTCLBD.API.Controllers
             var result = await _paymentService.ApprovePaymentAsync(paymentId);
             return Ok(ApiResponse<bool>.SuccessResponse(result, "Payment approved and student enrolled successfully."));
         }
+
+        [HttpPost("refund/{paymentId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<ApiResponse<bool>>> RefundPayment(Guid paymentId)
+        {
+            var result = await _paymentService.RefundPaymentAsync(paymentId);
+            return Ok(ApiResponse<bool>.SuccessResponse(result, "Payment refunded and student enrollment deactivated successfully."));
+        }
     }
 }

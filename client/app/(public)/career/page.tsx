@@ -7,7 +7,7 @@ import type { JobResponseDto } from "@/types";
 import {
   RiBriefcaseLine,
   RiMapPin2Line,
-  RiMoneyDollarCircleLine,
+  RiCoinsLine,
   RiSearchLine,
   RiCloseLine,
   RiArrowRightUpLine,
@@ -184,7 +184,7 @@ export default function CareerPage() {
 
                 <div className="pt-6 border-t border-border mt-6 flex items-center justify-between">
                   <div className="flex items-center gap-1 text-xs font-semibold text-heading">
-                    <RiMoneyDollarCircleLine className="text-base text-secondary" />
+                    <RiCoinsLine className="text-base text-secondary" />
                     <span>{job.salaryRange}</span>
                   </div>
 
@@ -240,7 +240,7 @@ export default function CareerPage() {
                     <RiMapPin2Line /> <span>{activeJob.location}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <RiMoneyDollarCircleLine className="text-base text-secondary" /> <span>{activeJob.salaryRange}</span>
+                    <RiCoinsLine className="text-base text-secondary" /> <span>{activeJob.salaryRange}</span>
                   </div>
                 </div>
               </div>

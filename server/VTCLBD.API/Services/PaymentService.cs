@@ -207,6 +207,33 @@ namespace VTCLBD.API.Services
             return true;
         }
 
+        public async Task<bool> RefundPaymentAsync(Guid paymentId)
+        {
+            var payment = await _context.Payments
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == paymentId);
+
+            if (payment == null)
+                throw new NotFoundException("Payment record not found.");
+
+            if (payment.Status == "Refunded")
+                throw new ApiException("Payment is already refunded.", 400);
+
+            // 1. Update Payment Status
+            payment.Status = "Refunded";
+
+            // 2. Remove Enrollment
+            var enrollment = await _context.Enrollments
+                .FirstOrDefaultAsync(e => e.UserId == payment.UserId && e.CourseId == payment.CourseId);
+            if (enrollment != null)
+            {
+                _context.Enrollments.Remove(enrollment);
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<PaymentResponseDto> InitiateSSLCommerzPaymentAsync(string userId, Guid courseId, string backendBaseUrl)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -228,7 +255,7 @@ namespace VTCLBD.API.Services
                 throw new ApiException("You are already enrolled in this training.", 400);
 
             // Generate unique transaction ID
-            var tranId = $"VTCLBD_{Guid.NewGuid().ToString("N").Substring(0, 12)}".ToUpper();
+            var tranId = $"VDCBD_{Guid.NewGuid().ToString("N").Substring(0, 12)}".ToUpper();
 
             // Create pending payment record
             var payment = new PaymentRecord

@@ -29,4 +29,7 @@ export const paymentService = {
 
   approvePayment: (paymentId: string) =>
     api.post<ApiResponse<boolean>>(`/payment/approve/${paymentId}`).then((r) => r.data),
+
+  refundPayment: (paymentId: string) =>
+    api.post<ApiResponse<boolean>>(`/payment/refund/${paymentId}`).then((r) => r.data),
 };

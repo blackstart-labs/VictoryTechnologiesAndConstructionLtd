@@ -72,12 +72,24 @@ export function Navbar() {
           <div className="hidden lg:flex items-center gap-3">
             {isAuthenticated ? (
               <>
-                <Link
-                  href={user?.role === "Admin" ? "/admin" : "/dashboard"}
-                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-                >
+                <span className="text-sm font-medium text-muted-foreground">
                   Hi, {user?.fullName?.split(" ")[0]} 👋
-                </Link>
+                </span>
+                {user?.role === "Admin" ? (
+                  <Link
+                    href="/admin"
+                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+                  >
+                    Admin Panel
+                  </Link>
+                ) : (
+                  <Link
+                    href="/dashboard"
+                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={logout}
                   className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-all"
@@ -133,12 +145,34 @@ export function Navbar() {
           ))}
           <div className="pt-2 flex flex-col gap-2">
             {isAuthenticated ? (
-              <button
-                onClick={() => { logout(); setMenuOpen(false); }}
-                className="w-full px-4 py-2.5 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-all"
-              >
-                Logout
-              </button>
+              <>
+                <div className="px-4 py-1 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
+                  Logged in as {user?.fullName}
+                </div>
+                {user?.role === "Admin" ? (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium text-center hover:bg-primary/90 transition-all"
+                  >
+                    Admin Panel
+                  </Link>
+                ) : (
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium text-center hover:bg-primary/90 transition-all"
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                <button
+                  onClick={() => { logout(); setMenuOpen(false); }}
+                  className="w-full px-4 py-2.5 rounded-lg border border-border text-sm font-medium text-center hover:bg-muted transition-all"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <>
                 <Link
