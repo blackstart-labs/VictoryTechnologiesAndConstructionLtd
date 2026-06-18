@@ -75,7 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               />
             </div>
             <span className="font-bold text-sm tracking-tight text-foreground">
-              VTCLBD<span className="text-primary">Admin</span>
+              VDCBD<span className="text-primary">Admin</span>
             </span>
           </Link>
         </div>

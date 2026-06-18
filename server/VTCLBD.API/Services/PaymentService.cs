@@ -42,6 +42,62 @@ namespace VTCLBD.API.Services
             if (existingEnrollment != null)
                 throw new ApiException("You are already enrolled in this training.", 400);
 
+            if (course.Price == 0)
+            {
+                // Free Course: Auto-approve immediately!
+                var freePayment = new PaymentRecord
+                {
+                    UserId = userId,
+                    CourseId = request.CourseId,
+                    Amount = 0,
+                    Status = "Success",
+                    TransactionId = $"FREE_{Guid.NewGuid().ToString("N").Substring(0, 12)}".ToUpper(),
+                    PaymentMethod = "Free Enrollment",
+                    PhoneNumber = "N/A",
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Payments.Add(freePayment);
+
+                var enrollment = new Enrollment
+                {
+                    UserId = userId,
+                    CourseId = request.CourseId,
+                    EnrolledAt = DateTime.UtcNow,
+                    IsActive = true
+                };
+                _context.Enrollments.Add(enrollment);
+
+                // Upgrade role to Student
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("User") && !roles.Contains("Student") && !roles.Contains("Admin"))
+                    {
+                        user.Role = "Student";
+                        await _userManager.UpdateAsync(user);
+                        await _userManager.RemoveFromRoleAsync(user, "User");
+                        await _userManager.AddToRoleAsync(user, "Student");
+                    }
+                    else if (!roles.Contains("Student") && !roles.Contains("Admin"))
+                    {
+                        user.Role = "Student";
+                        await _userManager.UpdateAsync(user);
+                        await _userManager.AddToRoleAsync(user, "Student");
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return new PaymentResponseDto
+                {
+                    TransactionId = freePayment.TransactionId,
+                    Status = "Success",
+                    Message = "You have successfully enrolled in this free training!",
+                    IsEnrolled = true
+                };
+            }
+
             // Check if there is an active pending/success payment with this transaction ID
             var existingPayment = await _context.Payments
                 .FirstOrDefaultAsync(p => p.TransactionId == request.TransactionId);
@@ -160,6 +216,9 @@ namespace VTCLBD.API.Services
             var course = await _context.Courses.FindAsync(courseId);
             if (course == null)
                 throw new NotFoundException("Course/Training not found.");
+
+            if (course.Price == 0)
+                throw new ApiException("Free courses cannot be purchased via SSLCommerz.", 400);
 
             // Check if already enrolled
             var existingEnrollment = await _context.Enrollments

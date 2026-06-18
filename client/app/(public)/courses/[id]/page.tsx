@@ -260,7 +260,9 @@ export default function CourseDetailPage() {
                 <div className="text-xs uppercase font-extrabold tracking-widest text-muted-foreground">
                   Enrollment Fee
                 </div>
-                <div className="text-4xl font-extrabold text-primary">{formatPrice(course.price)}</div>
+                <div className="text-4xl font-extrabold text-primary">
+                  {course.price === 0 ? "Free" : formatPrice(course.price)}
+                </div>
                 <button
                   onClick={handleEnrollClick}
                   className="w-full py-3.5 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-lg shadow-primary/15"
@@ -424,35 +426,51 @@ export default function CourseDetailPage() {
 
             {/* Modal Header */}
             <div className="mb-6 space-y-2 pr-6">
-              <h3 className="text-xl font-bold text-[#1A1A1A]">Request Course Enrollment</h3>
+              <h3 className="text-xl font-bold text-[#1A1A1A]">
+                {course.price === 0 ? "Free Course Enrollment" : "Request Course Enrollment"}
+              </h3>
               <p className="text-xs text-muted-foreground">
-                To enroll in <span className="font-semibold text-foreground">{course.title}</span>, please pay the course fee manually and submit your details.
+                {course.price === 0 ? (
+                  <>You are about to enroll in the free course <span className="font-semibold text-foreground">{course.title}</span>.</>
+                ) : (
+                  <>To enroll in <span className="font-semibold text-foreground">{course.title}</span>, please pay the course fee manually and submit your details.</>
+                )}
               </p>
             </div>
 
             {/* Payment Guidelines */}
-            <div className="p-4 rounded-2xl bg-primary/[0.03] border border-primary/20 space-y-3 mb-6">
-              <h4 className="text-xs font-bold text-primary flex items-center gap-1.5">
-                <RiShieldCheckLine className="text-base" />
-                Manual Payment Guidelines
-              </h4>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                Please send exactly <span className="font-extrabold text-foreground">{formatPrice(course.price)}</span> to any of our official payment accounts below:
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                <div className="p-2.5 rounded-xl border border-border bg-background">
-                  <p className="font-bold text-foreground">bKash (Merchant)</p>
-                  <p className="text-muted-foreground font-semibold">01712-345678</p>
+            {course.price > 0 && (
+              <div className="p-4 rounded-2xl bg-primary/[0.03] border border-primary/20 space-y-3 mb-6">
+                <h4 className="text-xs font-bold text-primary flex items-center gap-1.5">
+                  <RiShieldCheckLine className="text-base" />
+                  Manual Payment Guidelines
+                </h4>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  Please send exactly <span className="font-extrabold text-foreground">{formatPrice(course.price)}</span> to any of our official payment accounts below:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 rounded-xl border border-border bg-background">
+                    <p className="font-bold text-foreground">bKash (Merchant)</p>
+                    <p className="text-muted-foreground font-semibold">01712-345678</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl border border-border bg-background">
+                    <p className="font-bold text-foreground">Nagad (Personal)</p>
+                    <p className="text-muted-foreground font-semibold">01912-345678</p>
+                  </div>
                 </div>
-                <div className="p-2.5 rounded-xl border border-border bg-background">
-                  <p className="font-bold text-foreground">Nagad (Personal)</p>
-                  <p className="text-muted-foreground font-semibold">01912-345678</p>
-                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  * For Bank Transfer, please contact our support at contact@vtclbd.com or +880 1700-000000.
+                </p>
               </div>
-              <p className="text-[10px] text-muted-foreground">
-                * For Bank Transfer, please contact our support at contact@vtclbd.com or +880 1700-000000.
-              </p>
-            </div>
+            )}
+
+            {/* Free Course Guidelines */}
+            {course.price === 0 && (
+              <div className="p-4 rounded-2xl bg-green-500/[0.03] border border-green-500/20 text-xs text-muted-foreground leading-relaxed mb-6">
+                <p className="font-semibold text-green-600 mb-1">🎁 Free Course Enrollment</p>
+                This training program is completely free of charge. Click the button below to confirm your enrollment and start learning instantly.
+              </div>
+            )}
 
             {/* Submission Form */}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-sm">
@@ -482,84 +500,99 @@ export default function CourseDetailPage() {
                 </div>
               </div>
 
-              {/* Payment Method Selector */}
-              <div>
-                <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                  Select Payment Method
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {["SSLCommerz", "bKash", "Nagad", "Bank Transfer"].map((method) => (
-                    <button
-                      type="button"
-                      key={method}
-                      onClick={() => setValue("paymentMethod", method as any)}
-                      className={`py-2.5 px-2 rounded-xl border text-center font-bold text-[11px] transition-all leading-tight ${
-                        selectedPaymentMethod === method
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {method === "SSLCommerz" ? "Online Pay" : method}
-                    </button>
-                  ))}
-                </div>
-                {errors.paymentMethod && (
-                  <p className="text-xs text-red-500 mt-1">{errors.paymentMethod.message}</p>
-                )}
-              </div>
-
-              {selectedPaymentMethod === "SSLCommerz" ? (
-                <div className="p-4 rounded-2xl bg-primary/[0.03] border border-primary/20 text-xs text-muted-foreground leading-relaxed">
-                  <p className="font-semibold text-primary mb-1">💳 Online Payment (SSLCommerz Gateway)</p>
-                  You will be securely redirected to the SSLCommerz sandbox payment gateway. You can pay using local debit/credit cards, mobile banking (bKash, Nagad, Rocket), or internet banking.
-                </div>
-              ) : (
+              {course.price > 0 && (
                 <>
-                  {/* Phone/Account Number */}
+                  {/* Payment Method Selector */}
                   <div>
                     <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                      Sender Phone / Account Number
+                      Select Payment Method
                     </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. 017XXXXXXXX"
-                      {...register("phoneNumber")}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs"
-                    />
-                    {errors.phoneNumber && (
-                      <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {["SSLCommerz", "bKash", "Nagad", "Bank Transfer"].map((method) => (
+                        <button
+                          type="button"
+                          key={method}
+                          onClick={() => setValue("paymentMethod", method as any)}
+                          className={`py-2.5 px-2 rounded-xl border text-center font-bold text-[11px] transition-all leading-tight ${
+                            selectedPaymentMethod === method
+                              ? "border-primary bg-primary/10 text-primary"
+                              : "border-border text-muted-foreground hover:text-foreground hover:bg-muted"
+                          }`}
+                        >
+                          {method === "SSLCommerz" ? "Online Pay" : method}
+                        </button>
+                      ))}
+                    </div>
+                    {errors.paymentMethod && (
+                      <p className="text-xs text-red-500 mt-1">{errors.paymentMethod.message}</p>
                     )}
                   </div>
 
-                  {/* Transaction ID */}
-                  <div>
-                    <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
-                      Transaction ID (TxnID)
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter the transaction reference"
-                      {...register("transactionId")}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs uppercase"
-                    />
-                    {errors.transactionId && (
-                      <p className="text-xs text-red-500 mt-1">{errors.transactionId.message}</p>
-                    )}
-                  </div>
+                  {selectedPaymentMethod === "SSLCommerz" ? (
+                    <div className="p-4 rounded-2xl bg-primary/[0.03] border border-primary/20 text-xs text-muted-foreground leading-relaxed">
+                      <p className="font-semibold text-primary mb-1">💳 Online Payment (SSLCommerz Gateway)</p>
+                      You will be securely redirected to the SSLCommerz sandbox payment gateway. You can pay using local debit/credit cards, mobile banking (bKash, Nagad, Rocket), or internet banking.
+                    </div>
+                  ) : (
+                    <>
+                      {/* Phone/Account Number */}
+                      <div>
+                        <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                          Sender Phone / Account Number
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 017XXXXXXXX"
+                          {...register("phoneNumber")}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs"
+                        />
+                        {errors.phoneNumber && (
+                          <p className="text-xs text-red-500 mt-1">{errors.phoneNumber.message}</p>
+                        )}
+                      </div>
+
+                      {/* Transaction ID */}
+                      <div>
+                        <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">
+                          Transaction ID (TxnID)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Enter the transaction reference"
+                          {...register("transactionId")}
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border/80 bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs uppercase"
+                        />
+                        {errors.transactionId && (
+                          <p className="text-xs text-red-500 mt-1">{errors.transactionId.message}</p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </>
               )}
 
               {/* Submit Button */}
               <div className="pt-2">
-                <button
-                  type="submit"
-                  disabled={enrollMutation.isPending}
-                  className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-md disabled:opacity-60"
-                >
-                  {enrollMutation.isPending
-                    ? (selectedPaymentMethod === "SSLCommerz" ? "Redirecting..." : "Submitting Request...")
-                    : (selectedPaymentMethod === "SSLCommerz" ? "Pay and Enroll Online" : "Submit Enrollment Request")}
-                </button>
+                {course.price === 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => enrollMutation.mutate({ paymentMethod: "SSLCommerz" } as any)}
+                    disabled={enrollMutation.isPending}
+                    className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-md disabled:opacity-60"
+                  >
+                    {enrollMutation.isPending ? "Enrolling..." : "Confirm Free Enrollment"}
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={enrollMutation.isPending}
+                    className="w-full py-3 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/95 transition-all shadow-md disabled:opacity-60"
+                  >
+                    {enrollMutation.isPending
+                      ? (selectedPaymentMethod === "SSLCommerz" ? "Redirecting..." : "Submitting Request...")
+                      : (selectedPaymentMethod === "SSLCommerz" ? "Pay and Enroll Online" : "Submit Enrollment Request")}
+                  </button>
+                )}
               </div>
             </form>
           </div>
