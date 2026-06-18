@@ -176,10 +176,10 @@ export default function LearnPage() {
       </header>
 
       {/* Main split dashboard layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col lg:flex-row lg:overflow-hidden min-h-0">
         
         {/* Left: Video Player & Details */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 lg:overflow-y-auto p-6 space-y-6">
           {activeLesson ? (
             <>
               {/* Premium Video Embed */}
@@ -255,7 +255,7 @@ export default function LearnPage() {
         </div>
 
         {/* Right: Curriculum Navigation Sidebar */}
-        <div className="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-border bg-muted/10 overflow-y-auto shrink-0 flex flex-col h-[50vh] lg:h-auto">
+        <div className="w-full lg:w-96 border-t lg:border-t-0 lg:border-l border-border bg-muted/10 lg:overflow-y-auto shrink-0 flex flex-col h-auto">
           <div className="p-4 border-b border-border bg-background shrink-0">
             <h3 className="font-bold text-sm">Course Curriculum</h3>
             <p className="text-xs text-muted-foreground mt-0.5">{allLessons.length} lessons inside modules</p>

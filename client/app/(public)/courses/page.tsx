@@ -16,11 +16,7 @@ import type { CourseResponseDto } from "@/types";
 import { CmsContent } from "@/components/cms-content";
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("en-BD", {
-    style: "currency",
-    currency: "BDT",
-    maximumFractionDigits: 0,
-  }).format(price);
+  return `${price.toLocaleString("en-US")} TK`;
 }
 
 function getCourseImage(title: string): string {

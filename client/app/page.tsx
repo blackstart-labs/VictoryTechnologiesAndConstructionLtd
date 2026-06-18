@@ -148,7 +148,7 @@ export default function HomePage() {
 
   const slides = [
     {
-      badge: "VTCLBD Consultancy & Academy",
+      badge: "VDCBD Consultancy & Academy",
       title: "Master The Art of Building & Engineering",
       subtitle: "Expert-led courses in AutoCAD, Revit, ETABS, and Site Engineering. Learn at your own pace and earn a verified professional certificate.",
       cta: "Explore Courses",
@@ -234,12 +234,12 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen text-foreground bg-background">
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
         {/* HERO */}
         <section className="relative py-8 lg:py-18">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div className="relative overflow-hidden rounded-[32px] border border-border shadow-xl bg-card h-[280px] sm:h-[420px] lg:h-[560px]">
+            <div className="relative overflow-hidden rounded-[32px] border border-border shadow-xl bg-card h-[340px] xs:h-[350px] sm:h-[420px] lg:h-[560px]">
 
               {banners.map((banner, index) => (
                 <div
@@ -258,17 +258,17 @@ export default function HomePage() {
 
                   <div className="absolute inset-0 bg-black/45" />
 
-                  <div className="hero-content relative z-10 h-full flex items-center px-6 sm:px-18">
-                    <div className="max-w-2xl text-white space-y-5">
-                      <span className="inline-flex px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold">
-                        VTCLBD Consultancy & Academy
+                  <div className="hero-content relative z-10 h-full flex items-center px-6 sm:px-16">
+                    <div className="max-w-2xl text-white space-y-3 sm:space-y-5">
+                      <span className="inline-flex px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] sm:text-xs font-semibold">
+                      VDCBD Consultancy & Academy
                       </span>
 
-                      <h1 className="text-3xl sm:text-5xl font-extrabold leading-tight">
+                      <h1 className="text-xl xs:text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">
                         {banner.title}
                       </h1>
 
-                      <div className="text-sm sm:text-base text-white/80 leading-relaxed max-w-xl">
+                      <div className="text-xs xs:text-sm sm:text-base text-white/80 leading-relaxed max-w-xl">
                         {index === 1 ? (
                           <CmsContent
                             identifier="home-hero-subtitle"
@@ -280,18 +280,18 @@ export default function HomePage() {
                         )}
                       </div>
 
-                      <div className="flex gap-3 pt-2 perspective-container">
+                      <div className="flex gap-2 sm:gap-3 pt-1 sm:pt-2 perspective-container">
                         <Link
                           href="/courses"
-                          className="btn-3d-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold transition-all"
+                          className="btn-3d-primary inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-xl bg-primary text-primary-foreground text-xs sm:text-sm font-bold transition-all"
                         >
                           Explore Courses
-                          <RiArrowRightLine />
+                          <RiArrowRightLine className="text-xs sm:text-sm" />
                         </Link>
 
                         <Link
                           href="/contact"
-                          className="btn-3d-secondary inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md text-white text-sm font-semibold transition-all"
+                          className="btn-3d-secondary inline-flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md text-white text-xs sm:text-sm font-semibold transition-all"
                         >
                           Contact Us
                         </Link>
@@ -309,7 +309,7 @@ export default function HomePage() {
                       (prev - 1 + banners.length) % banners.length
                   )
                 }
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/25 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/40 transition-all"
+                className="hidden sm:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/25 backdrop-blur-md border border-white/10 items-center justify-center text-white hover:bg-black/40 transition-all"
               >
                 <RiArrowLeftLine className="text-xl" />
               </button>
@@ -320,7 +320,7 @@ export default function HomePage() {
                     (prev) => (prev + 1) % banners.length
                   )
                 }
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/25 backdrop-blur-md border border-white/10 flex items-center justify-center text-white hover:bg-black/40 transition-all"
+                className="hidden sm:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/25 backdrop-blur-md border border-white/10 items-center justify-center text-white hover:bg-black/40 transition-all"
               >
                 <RiArrowRightLine className="text-xl" />
               </button>
@@ -605,7 +605,7 @@ export default function HomePage() {
             <div className="relative z-10 max-w-xl mx-auto space-y-6">
               <h2 className="text-3xl sm:text-4xl font-extrabold text-heading">Start Your Next Design or Course With Confidence</h2>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                Victory Design & Construction (VTCLBD) is committed to delivering state-of-the-art engineering plans, structural validations, and professional career courses.
+                Victory Design & Construction (VDCBD) is committed to delivering state-of-the-art engineering plans, structural validations, and professional career courses.
               </p>
               <div className="flex flex-wrap justify-center gap-4 pt-2">
                 <Link

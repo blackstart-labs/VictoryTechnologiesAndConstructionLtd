@@ -19,13 +19,13 @@ export function AiChatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      text: "Hello! I am your VTCLBD AI assistant. Ask me anything about our architectural designs, structural consultancy services, office branch locations, or academy training programs!",
+      text: "Hello! I am your VDCBD AI assistant. Ask me anything about our architectural designs, structural consultancy services, office branch locations, or academy training programs!",
     },
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [systemContext, setSystemContext] = useState(
-    "Victory Design & Construction (VTCLBD) is an engineering and architectural consultancy firm in Bangladesh."
+    "Victory Design & Construction (VDCBD) is an engineering and architectural consultancy firm in Bangladesh."
   );
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +60,7 @@ export function AiChatbot() {
     setIsTyping(true);
 
     try {
-      const promptText = `You are a helpful customer support chatbot for Victory Design & Construction (VTCLBD), an architectural and structural engineering consultancy company. Use the following context to answer questions about the company, branches, pricing, and courses. Be professional, concise, and helpful. If you do not know the answer, politely ask them to call customer care at +88 01779481486.
+      const promptText = `You are a helpful customer support chatbot for Victory Design & Construction (VDCBD), an architectural and structural engineering consultancy company. Use the following context to answer questions about the company, branches, pricing, and courses. Be professional, concise, and helpful. If you do not know the answer, politely ask them to call customer care at +88 01779481486.
 
 Context:
 ${systemContext}
@@ -80,7 +80,7 @@ User Question: ${userText}`;
     } catch (error) {
       console.error("AI Chatbot Error:", error);
       // Secondary local fallback if the API endpoint itself is unreachable
-      let fallbackMsg = "Victory Design & Construction (VTCLBD) is a leading architectural design and structural consultancy firm in Bangladesh.\n\nFor direct assistance, please contact us at +88 01779481486 or email victorydesign72@gmail.com.";
+      let fallbackMsg = "Victory Design & Construction (VDCBD) is a leading architectural design and structural consultancy firm in Bangladesh.\n\nFor direct assistance, please contact us at +88 01779481486 or email victorydesign72@gmail.com.";
       
       const normalizedQuery = userText.toLowerCase();
       if (normalizedQuery.includes("course") || normalizedQuery.includes("learn") || normalizedQuery.includes("training")) {
@@ -108,7 +108,7 @@ User Question: ${userText}`;
         <button
           onClick={() => setIsOpen(true)}
           className="w-14 h-14 rounded-full flex items-center justify-center text-white bg-gradient-to-tr from-[#135c7c] to-[#39c2e3] shadow-lg hover:shadow-cyan-500/25 hover:scale-105 active:scale-95 transition-all duration-300 relative group animate-bounce"
-          title="VTCLBD AI Support"
+          title="VDCBD AI Support"
         >
           <RiChatSmile3Line className="text-2xl" />
           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full" />

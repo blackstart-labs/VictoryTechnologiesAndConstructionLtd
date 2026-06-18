@@ -59,7 +59,7 @@ function formatDuration(seconds: number) {
 }
 
 function formatPrice(price: number) {
-  return new Intl.NumberFormat("en-BD", { style: "currency", currency: "BDT", maximumFractionDigits: 0 }).format(price);
+  return `${price.toLocaleString("en-US")} TK`;
 }
 
 function getCourseImage(title: string): string {
@@ -222,7 +222,7 @@ export default function CourseDetailPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-5">
               <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-bold uppercase tracking-wider">
-                VTCLBD Professional Training
+                VDCBD Professional Training
               </span>
               <h1 className="text-3xl sm:text-4xl font-extrabold leading-tight text-[#1A1A1A]">
                 {course.title}
@@ -231,7 +231,7 @@ export default function CourseDetailPage() {
               <div className="flex flex-wrap gap-4 pt-2 text-sm text-muted-foreground">
                 <span className="flex items-center gap-1.5 font-medium">
                   <RiUserLine className="text-primary text-base" />
-                  {course.instructorName ?? "VTCLBD Engineering Team"}
+                  {course.instructorName ?? "VDCBD Engineering Team"}
                 </span>
                 <span className="flex items-center gap-1.5 font-medium">
                   <RiPlayCircleLine className="text-primary text-base" />
@@ -459,7 +459,7 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
-                  * For Bank Transfer, please contact our support at contact@vtclbd.com or +880 1700-000000.
+                  * For Bank Transfer, please contact our support at contact@vdcbd.com or +880 1700-000000.
                 </p>
               </div>
             )}

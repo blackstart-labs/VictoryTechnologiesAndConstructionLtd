@@ -36,7 +36,7 @@ export function VideoPlayer({ videoUrl, title }: VideoPlayerProps) {
   // 1. Restrict Domains
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const allowedDomains = ["localhost", "127.0.0.1", "itsniloy.eu.org", "victorydesign", "vtclbd"];
+      const allowedDomains = ["localhost", "127.0.0.1", "itsniloy.eu.org", "victorydesign", "vdcbd", "vtclbd"];
       const hostname = window.location.hostname;
       const isAllowed = allowedDomains.some((domain) => hostname.includes(domain));
       setDomainAllowed(isAllowed);
@@ -203,7 +203,7 @@ export function VideoPlayer({ videoUrl, title }: VideoPlayerProps) {
         <RiShieldUserLine className="text-4xl mb-3 animate-pulse" />
         <h4 className="font-bold text-base">Security Domain Restriction</h4>
         <p className="text-xs text-zinc-500 mt-1 max-w-sm">
-          Playback is restricted on this domain. Streaming is only authorized through official VTCLBD learning applications.
+          Playback is restricted on this domain. Streaming is only authorized through official VDCBD learning applications.
         </p>
       </div>
     );
@@ -317,7 +317,7 @@ export function VideoPlayer({ videoUrl, title }: VideoPlayerProps) {
           <div className="flex items-center gap-4">
             {/* Watermark Logo */}
             <span className="text-[10px] tracking-widest text-zinc-500 font-bold select-none hover:text-cyan-400 transition-colors">
-              VTCLBD SECURE STREAM
+              VDCBD SECURE STREAM
             </span>
 
             {/* Fullscreen */}

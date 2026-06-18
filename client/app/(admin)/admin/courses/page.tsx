@@ -844,7 +844,7 @@ export default function AdminCoursesPage() {
                       {course.isPublished ? "Published" : "Draft"}
                     </span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-0.5">{course.instructorName} • BDT {course.price}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{course.instructorName} • {course.price.toLocaleString("en-US")} TK</p>
                 </div>
               </div>
 

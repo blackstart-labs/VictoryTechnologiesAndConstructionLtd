@@ -33,7 +33,7 @@ export function Footer() {
                 <RiGraduationCapLine className="text-primary-foreground text-xl" />
               </div>
               <span className="font-bold text-lg tracking-tight">
-                VTCL<span className="text-primary">BD</span>
+                VDC<span className="text-primary">BD</span>
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">

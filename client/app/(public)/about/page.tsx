@@ -58,7 +58,7 @@ const team = [
     specialty: "Structural & Civil Engineering",
     image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400",
     linkedin: "#",
-    email: "maruf@vtclbd.com"
+    email: "maruf@vdcbd.com"
   },
   {
     name: "Ar. Tasnim Rahman",
@@ -66,7 +66,7 @@ const team = [
     specialty: "Modern Architecture & Planning",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
     linkedin: "#",
-    email: "tasnim@vtclbd.com"
+    email: "tasnim@vdcbd.com"
   },
   {
     name: "Engr. Naimul Islam",
@@ -74,7 +74,7 @@ const team = [
     specialty: "Site Operations & Safety",
     image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400",
     linkedin: "#",
-    email: "naimul@vtclbd.com"
+    email: "naimul@vdcbd.com"
   },
   {
     name: "Sarah Chowdhury",
@@ -82,7 +82,7 @@ const team = [
     specialty: "Residential & Commercial Styling",
     image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=400",
     linkedin: "#",
-    email: "sarah@vtclbd.com"
+    email: "sarah@vdcbd.com"
   }
 ];
 

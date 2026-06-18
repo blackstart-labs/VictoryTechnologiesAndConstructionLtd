@@ -242,27 +242,32 @@
 
 /* 3D Card tilt effect */
 .card-3d {
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease, box-shadow 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   transform-style: preserve-3d;
   backface-visibility: hidden;
 }
 
 .card-3d:hover {
-  transform: translateY(-8px) rotateX(3deg) rotateY(-3deg) translateZ(10px);
-  border-color: rgba(var(--primary), 0.3);
+  transform: translateY(-8px) rotateX(2deg) rotateY(-2deg) translateZ(8px);
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
   box-shadow: 
-    0 20px 40px -15px oklch(0.49 0.09 225 / 15%), 
-    0 15px 25px -10px oklch(0.76 0.12 215 / 10%),
-    0 0 1px 1px oklch(0.49 0.09 225 / 5%);
+    0 24px 48px -12px color-mix(in srgb, var(--primary) 12%, transparent), 
+    0 16px 24px -10px color-mix(in srgb, var(--secondary) 8%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--primary) 6%, transparent);
 }
 
 /* Inner 3D elements that stand out even more on hover */
 .card-3d-content {
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
 }
 
 .card-3d:hover .card-3d-content {
-  transform: translateZ(25px);
+  transform: translateZ(12px);
+}
+
+.card-3d:hover .card-3d-content svg {
+  transform: scale(1.1) rotate(4deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 3D button press/raise effect */

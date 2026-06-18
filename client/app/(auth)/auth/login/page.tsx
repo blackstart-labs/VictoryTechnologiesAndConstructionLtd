@@ -59,7 +59,7 @@ export default function LoginPage() {
   const handleGoogleLogin = () => {
     // Standard OAuth flow: mock successful user info retrieval from OAuth pop-up
     googleMutation.mutate({
-      email: "student@vtclbd.com",
+      email: "student@vdcbd.com",
       fullName: "Google Student",
       idToken: "google-oauth-token-12345",
     });
@@ -156,20 +156,20 @@ export default function LoginPage() {
             <button
               type="button"
               className="flex flex-col items-start gap-0.5 px-3 py-2 rounded-lg border border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all text-left"
-              onClick={() => { setValue("email", "admin@vtclbd.com"); setValue("password", "Admin@123!"); }}
+              onClick={() => { setValue("email", "admin@vdcbd.com"); setValue("password", "Admin@123!"); }}
             >
               <span className="text-[10px] text-muted-foreground font-semibold">ADMIN</span>
               <span className="text-xs text-primary font-bold">👑 Fill Admin</span>
-              <span className="text-[10px] text-muted-foreground font-mono">admin@vtclbd.com</span>
+              <span className="text-[10px] text-muted-foreground font-mono">admin@vdcbd.com</span>
             </button>
             <button
               type="button"
               className="flex flex-col items-start gap-0.5 px-3 py-2 rounded-lg border border-green-500/20 bg-green-500/5 hover:bg-green-500/10 transition-all text-left"
-              onClick={() => { setValue("email", "student@vtclbd.com"); setValue("password", "Student@123!"); }}
+              onClick={() => { setValue("email", "student@vdcbd.com"); setValue("password", "Student@123!"); }}
             >
               <span className="text-[10px] text-muted-foreground font-semibold">STUDENT</span>
               <span className="text-xs text-green-600 font-bold">🎓 Fill Student</span>
-              <span className="text-[10px] text-muted-foreground font-mono">student@vtclbd.com</span>
+              <span className="text-[10px] text-muted-foreground font-mono">student@vdcbd.com</span>
             </button>
           </div>
         </div>

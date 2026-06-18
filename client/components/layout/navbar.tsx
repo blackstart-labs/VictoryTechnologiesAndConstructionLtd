@@ -44,20 +44,20 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <img src="/logo-transparent.png" alt="VTCLBD Logo" className="w-9 h-9 rounded-lg object-contain transition-transform group-hover:scale-110" />
+            <img src="/logo-transparent.png" alt="VDCBD Logo" className="w-9 h-9 rounded-lg object-contain transition-transform group-hover:scale-110" />
             <span className="font-bold text-lg tracking-tight">
               VDC<span className="text-primary">BD</span>
             </span>
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200",
+                  "px-2 xl:px-3 py-2 rounded-lg text-xs xl:text-sm font-semibold transition-all duration-200",
                   pathname === link.href
                     ? "text-primary bg-primary/10"
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
@@ -69,30 +69,30 @@ export function Navbar() {
           </div>
 
           {/* Auth Buttons */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
             {isAuthenticated ? (
               <>
-                <span className="text-sm font-medium text-muted-foreground">
+                <span className="hidden xl:inline text-xs xl:text-sm font-semibold text-muted-foreground">
                   Hi, {user?.fullName?.split(" ")[0]} 👋
                 </span>
                 {user?.role === "Admin" ? (
                   <Link
                     href="/admin"
-                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+                    className="px-3 xl:px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs xl:text-sm font-bold hover:bg-primary/90 transition-all shadow-sm"
                   >
                     Admin Panel
                   </Link>
                 ) : (
                   <Link
                     href="/dashboard"
-                    className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+                    className="px-3 xl:px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs xl:text-sm font-bold hover:bg-primary/90 transition-all shadow-sm"
                   >
                     Dashboard
                   </Link>
                 )}
                 <button
                   onClick={logout}
-                  className="px-4 py-2 rounded-lg border border-border text-sm font-medium hover:bg-muted transition-all"
+                  className="px-3 xl:px-4 py-2 rounded-lg border border-border text-xs xl:text-sm font-semibold hover:bg-muted transition-all"
                 >
                   Logout
                 </button>
@@ -101,13 +101,13 @@ export function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="px-3 py-2 rounded-lg text-xs xl:text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+                  className="px-3 xl:px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs xl:text-sm font-bold hover:bg-primary/90 transition-all shadow-sm"
                 >
                   Get Started
                 </Link>

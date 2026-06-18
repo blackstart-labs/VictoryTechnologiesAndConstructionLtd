@@ -315,7 +315,7 @@ export default function AdminCareersPage() {
         <div className="rounded-2xl border border-dashed border-border p-12 text-center bg-background max-w-lg mx-auto">
           <RiBriefcaseLine className="text-5xl text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="font-semibold text-lg text-heading">No careers posted</h3>
-          <p className="text-sm text-muted-foreground">Setup recruitment positions to dynamically build your VTCLBD consultant team.</p>
+          <p className="text-sm text-muted-foreground">Setup recruitment positions to dynamically build your VDCBD consultant team.</p>
         </div>
       ) : (
         <div className="space-y-4">

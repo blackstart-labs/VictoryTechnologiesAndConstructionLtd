@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
 function getLocalFallbackResponse(query: string, context: string): string {
   if (!context) {
-    return "Victory Design & Construction (VTCLBD) is a leading architectural design and structural consultancy firm in Bangladesh. Please call customer care at +88 01779481486 for inquiries.";
+    return "Victory Design & Construction (VDCBD) is a leading architectural design and structural consultancy firm in Bangladesh. Please call customer care at +88 01779481486 for inquiries.";
   }
 
   const normalizedQuery = query.toLowerCase();
@@ -132,7 +132,7 @@ function getLocalFallbackResponse(query: string, context: string): string {
         line.toLowerCase().includes("contact")
     );
     if (contactLines.length > 0) {
-      return `You can reach VTCLBD Customer Support at:\n\n${contactLines
+      return `You can reach VDCBD Customer Support at:\n\n${contactLines
         .map((line) => `📞 ${line.trim().replace(/^-/, "").trim()}`)
         .join("\n")}`;
     }
@@ -189,6 +189,6 @@ function getLocalFallbackResponse(query: string, context: string): string {
   }
 
   // Default response using intro
-  const intro = paragraphs[0] || "Victory Design & Construction (VTCLBD) is a leading architectural design and structural consultancy firm in Bangladesh.";
+  const intro = paragraphs[0] || "Victory Design & Construction (VDCBD) is a leading architectural design and structural consultancy firm in Bangladesh.";
   return `${intro}\n\nNeed immediate help? Call us at +88 01779481486 or email victorydesign72@gmail.com.`;
 }
