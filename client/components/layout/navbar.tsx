@@ -46,7 +46,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2 group">
             <img src="/logo-transparent.png" alt="VTCLBD Logo" className="w-9 h-9 rounded-lg object-contain transition-transform group-hover:scale-110" />
             <span className="font-bold text-lg tracking-tight">
-              VTC<span className="text-primary">BD</span>
+              VDC<span className="text-primary">BD</span>
             </span>
           </Link>
 
