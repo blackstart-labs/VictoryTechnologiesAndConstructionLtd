@@ -16,6 +16,7 @@ import {
   RiUserLine,
   RiBriefcaseLine,
   RiDoubleQuotesL,
+  RiRobotLine,
 } from "react-icons/ri";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -28,7 +29,7 @@ const adminNavItems = [
   { label: "Manage Projects", href: "/admin/projects", icon: RiBuildingLine },
   { label: "Manage Reviews", href: "/admin/feedbacks", icon: RiDoubleQuotesL },
   { label: "Manage Careers", href: "/admin/careers", icon: RiBriefcaseLine },
-  { label: "Manage CMS", href: "/admin/cms", icon: RiSettings4Line },
+  { label: "Chatbot Context", href: "/admin/chatbot-context", icon: RiRobotLine },
   { label: "Manage Users", href: "/admin/users", icon: RiUserLine },
 ];
 

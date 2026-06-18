@@ -58,6 +58,9 @@ namespace VTCLBD.API.Services
 
         public async Task<ContentBlockResponseDto> CreateContentBlockAsync(CreateContentBlockDto request)
         {
+            if (request.Identifier != "ai-chatbot-context")
+                throw new ApiException("Only 'ai-chatbot-context' can be managed.", 400);
+
             var existing = await _context.ContentBlocks.FirstOrDefaultAsync(c => c.Identifier == request.Identifier);
             if (existing != null)
                 throw new ApiException($"Content block with identifier '{request.Identifier}' already exists.", 400);
@@ -87,6 +90,9 @@ namespace VTCLBD.API.Services
 
         public async Task<ContentBlockResponseDto> UpdateContentBlockAsync(string identifier, UpdateContentBlockDto request)
         {
+            if (identifier != "ai-chatbot-context")
+                throw new ApiException("Only 'ai-chatbot-context' can be managed.", 400);
+
             var block = await _context.ContentBlocks.FirstOrDefaultAsync(c => c.Identifier == identifier);
 
             if (block == null)
@@ -115,15 +121,7 @@ namespace VTCLBD.API.Services
 
         public async Task<bool> DeleteContentBlockAsync(string identifier)
         {
-            var block = await _context.ContentBlocks.FirstOrDefaultAsync(c => c.Identifier == identifier);
-
-            if (block == null)
-                throw new NotFoundException($"Content block with identifier '{identifier}' not found.");
-
-            _context.ContentBlocks.Remove(block);
-            await _context.SaveChangesAsync();
-
-            return true;
+            throw new ApiException("Only 'ai-chatbot-context' can be managed. CMS content blocks cannot be deleted.", 400);
         }
     }
 }

@@ -32,9 +32,9 @@ export default function AdminDashboardPage() {
     queryFn: () => projectService.getAll(false),
   });
 
-  const { data: cmsRes, isLoading: cmsLoading } = useQuery({
-    queryKey: ["admin-cms"],
-    queryFn: () => cmsService.getAll(false),
+  const { data: chatbotRes, isLoading: chatbotLoading } = useQuery({
+    queryKey: ["cms-chatbot-context"],
+    queryFn: () => cmsService.getByIdentifier("ai-chatbot-context"),
   });
 
   const { data: jobsRes, isLoading: jobsLoading } = useQuery({
@@ -54,7 +54,7 @@ export default function AdminDashboardPage() {
 
   const courses = coursesRes?.data || [];
   const projects = projectsRes?.data || [];
-  const cmsBlocks = cmsRes?.data || [];
+  const chatbotActive = chatbotRes?.data?.isActive ? "Active" : "Inactive";
   const jobs = jobsRes?.data || [];
   const users = usersRes?.data || [];
   const payments = paymentsRes?.data || [];
@@ -203,10 +203,10 @@ export default function AdminDashboardPage() {
               <p className="text-xl font-bold text-heading">{jobs.length}</p>
             </div>
 
-            {/* CMS / Users count */}
+            {/* Chatbot Context Status */}
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-1">
-              <span className="text-xs text-muted-foreground font-semibold">CMS Blocks</span>
-              <p className="text-xl font-bold text-heading">{cmsBlocks.length}</p>
+              <span className="text-xs text-muted-foreground font-semibold">Chatbot Context</span>
+              <p className="text-xl font-bold text-heading">{chatbotLoading ? "..." : chatbotActive}</p>
             </div>
 
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-1">

@@ -79,7 +79,7 @@ export function Footer() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span>© {new Date().getFullYear()} VTCLBD. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} VDCBD. All rights reserved.</span>
           <span>Dhaka, Bangladesh</span>
         </div>
       </div>
