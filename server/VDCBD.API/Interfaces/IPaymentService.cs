@@ -1,0 +1,14 @@
+using VDCBD.API.DTOs.Payment;
+
+namespace VDCBD.API.Interfaces
+{
+    public interface IPaymentService
+    {
+        Task<PaymentResponseDto> RequestEnrollmentAsync(string userId, InitiatePaymentDto request);
+        Task<List<PaymentRecordDetailDto>> GetAllPaymentsAsync();
+        Task<bool> ApprovePaymentAsync(Guid paymentId);
+        Task<bool> RefundPaymentAsync(Guid paymentId);
+        Task<PaymentResponseDto> InitiateSSLCommerzPaymentAsync(string userId, Guid courseId, string backendBaseUrl);
+        Task<string> HandleSSLCommerzCallbackAsync(string tranId, string valId, string status);
+    }
+}

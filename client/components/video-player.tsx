@@ -36,7 +36,7 @@ export function VideoPlayer({ videoUrl, title }: VideoPlayerProps) {
   // 1. Restrict Domains
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const allowedDomains = ["localhost", "127.0.0.1", "itsniloy.eu.org", "victorydesign", "vdcbd", "vtclbd"];
+      const allowedDomains = ["localhost", "127.0.0.1", "itsniloy.eu.org", "victorydesign", "vdcbd"];
       const hostname = window.location.hostname;
       const isAllowed = allowedDomains.some((domain) => hostname.includes(domain));
       setDomainAllowed(isAllowed);

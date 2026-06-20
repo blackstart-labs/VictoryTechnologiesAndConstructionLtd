@@ -1,0 +1,29 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace VDCBD.API.Models
+{
+    public class Course
+    {
+        public Guid Id { get; set; }
+
+        [Required]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
+        public string Description { get; set; } = string.Empty;
+
+        public decimal Price { get; set; }
+
+        public string? VideoUrl { get; set; }
+        public string? VideoPublicId { get; set; }
+
+        public string? InstructorName { get; set; }
+
+        public bool IsPublished { get; set; } = true;
+
+        public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+        public DateTimeOffset? UpdatedAt { get; set; }
+
+        public ICollection<CourseModule> Modules { get; set; } = new List<CourseModule>();
+    }
+}

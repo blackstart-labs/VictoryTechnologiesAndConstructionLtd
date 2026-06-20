@@ -1,6 +1,6 @@
-# 🏗️ VTCLBD
+# 🏗️ VDCBD
 
-VTCLBD is a state-of-the-art construction, consultancy, and technical training platform engineered to empower design and civil engineering professionals across Bangladesh. It offers immersive video courses, interactive course progress tracking, automated certified credentials, and an advanced administrative panel to monitor student lifecycle, payments, and page copy (CMS) dynamically.
+VDCBD is a state-of-the-art construction, consultancy, and technical training platform engineered to empower design and civil engineering professionals across Bangladesh. It offers immersive video courses, interactive course progress tracking, automated certified credentials, and an advanced administrative panel to monitor student lifecycle, payments, and page copy (CMS) dynamically.
 
 ---
 
@@ -45,11 +45,11 @@ graph TD
 *   PostgreSQL running locally (or via Docker)
 
 ### 1. Setting Up the Database & Backend
-1.  Navigate to the `server/VTCLBD.API` folder.
+1.  Navigate to the `server/VDCBD.API` folder.
 2.  Set up your local Connection String inside `appsettings.json` (or `.env.local`):
     ```json
     "ConnectionStrings": {
-      "DefaultConnection": "Host=localhost;Database=vtclbd_academy;Username=postgres;Password=yourpassword"
+      "DefaultConnection": "Host=localhost;Database=vdcbd_academy;Username=postgres;Password=yourpassword"
     }
     ```
 3.  Apply entity migrations and seed initial demo data:
@@ -91,14 +91,14 @@ The application is fully containerized using multi-stage build files. To protect
 1.  Create a `.env` file in the root directory:
     ```env
     # Database Configurations
-    DB_NAME=vtclbd_academy
-    DB_USER=vtclbd_admin
-    DB_PASSWORD=vtclbd_secure_password_2026
+    DB_NAME=vdcbd_academy
+    DB_USER=vdcbd_admin
+    DB_PASSWORD=vdcbd_secure_password_2026
 
     # JWT Security Credentials
-    JWT_KEY=VTCLBD_SuperSecretPremiumJWTKey_2026_SecureSecurityKey
-    JWT_ISSUER=VTCLBD
-    JWT_AUDIENCE=VTCLBD_Students
+    JWT_KEY=VDCBD_SuperSecretPremiumJWTKey_2026_SecureSecurityKey
+    JWT_ISSUER=VDCBD
+    JWT_AUDIENCE=VDCBD_Students
 
     # API Endpoint Configurations
     NEXT_PUBLIC_API_URL=http://localhost:5237/api
@@ -122,8 +122,8 @@ The database comes fully populated with rich demo courses, modules, videos, proj
 
 | Role | Username / Email | Password |
 | :--- | :--- | :--- |
-| **Administrator** | `admin@vtclbd.com` | `Admin@123` |
-| **Student** | `student@vtclbd.com` | `Student@123` |
+| **Administrator** | `admin@vdcbd.com` | `Admin@123` |
+| **Student** | `student@vdcbd.com` | `Student@123` |
 
 ---
 

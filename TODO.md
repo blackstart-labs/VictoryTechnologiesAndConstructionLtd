@@ -1,6 +1,6 @@
-# 📝 VTCLBD Implementation Roadmap & TODO Tracker
+# 📝 VDCBD Implementation Roadmap & TODO Tracker
 
-This file tracks the completed, ongoing, and pending features of the Victory Technologies and Construction Ltd (VTCLBD) platform.
+This file tracks the completed, ongoing, and pending features of the Victory Technologies and Construction Ltd (VDCBD) platform.
 
 ## 🟩 COMPLETED FEATURES
 
@@ -21,7 +21,7 @@ This file tracks the completed, ongoing, and pending features of the Victory Tec
     *   High-resolution fallback mock template for visual elegance.
     *   Exclusively enrolled course certificate listings.
 *   **📦 Backend REST API**:
-    *   EF Core schema definitions with seeded Admin (`admin@vtclbd.com` / `Admin@123`) and Student (`student@vtclbd.com` / `Student@123`) accounts.
+    *   EF Core schema definitions with seeded Admin (`admin@vdcbd.com` / `Admin@123`) and Student (`student@vdcbd.com` / `Student@123`) accounts.
     *   Dynamic cascading deletion of users (`DeleteUserAsync` in `UserService.cs`) that cleans enrollments, progress, and payment records without violating relational integrity.
 *   **💻 Admin CRUD Overlays**:
     *   Unified frosted-glass fullscreen modal setup for Courses, Projects, and CMS blocks to eliminate scrolling.

@@ -3,17 +3,17 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
 # Copy CSPROJ and restore dependencies
-COPY ["VTCLBD.API/VTCLBD.API.csproj", "VTCLBD.API/"]
-RUN dotnet restore "VTCLBD.API/VTCLBD.API.csproj"
+COPY ["VDCBD.API/VDCBD.API.csproj", "VDCBD.API/"]
+RUN dotnet restore "VDCBD.API/VDCBD.API.csproj"
 
 # Copy the entire source tree and build in Release mode
 COPY . .
-WORKDIR "/src/VTCLBD.API"
-RUN dotnet build "VTCLBD.API.csproj" -c Release -o /app/build
+WORKDIR "/src/VDCBD.API"
+RUN dotnet build "VDCBD.API.csproj" -c Release -o /app/build
 
 # Publish output files
 FROM build AS publish
-RUN dotnet publish "VTCLBD.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "VDCBD.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Stage 2: Clean Runtime Image
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
@@ -25,4 +25,4 @@ ENV ASPNETCORE_URLS=http://+:5237
 ENV ASPNETCORE_ENVIRONMENT=Production
 EXPOSE 5237
 
-ENTRYPOINT ["dotnet", "VTCLBD.API.dll"]
+ENTRYPOINT ["dotnet", "VDCBD.API.dll"]

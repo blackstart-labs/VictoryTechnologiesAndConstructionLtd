@@ -4,7 +4,7 @@ services:
   # Database Service
   db:
     image: postgres:15-alpine
-    container_name: vtclbd-db
+    container_name: vdcbd-db
     restart: always
     environment:
       POSTGRES_DB: ${DB_NAME}
@@ -25,7 +25,7 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-    container_name: vtclbd-backend
+    container_name: vdcbd-backend
     restart: always
     ports:
       - "5237:5237"
@@ -41,7 +41,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./server/VTCLBD.API:/app/src
+      - ./server/VDCBD.API:/app/src
 
   # Frontend Next.js Client Service
   frontend:
@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
-    container_name: vtclbd-frontend
+    container_name: vdcbd-frontend
     restart: always
     ports:
       - "3000:3000"

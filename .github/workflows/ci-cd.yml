@@ -21,13 +21,13 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore Dependencies
-        run: dotnet restore VTCLBD.slnx
+        run: dotnet restore VDCBD.slnx
 
       - name: Build Solution
-        run: dotnet build VTCLBD.slnx --configuration Release --no-restore
+        run: dotnet build VDCBD.slnx --configuration Release --no-restore
 
       - name: Run Tests
-        run: dotnet test VTCLBD.slnx --configuration Release --no-build --verbosity normal
+        run: dotnet test VDCBD.slnx --configuration Release --no-build --verbosity normal
 
   # Frontend Build & Lint
   frontend:
@@ -77,7 +77,7 @@ jobs:
           context: ./server
           file: ./server/Dockerfile
           push: false
-          tags: vtclbd-backend:latest
+          tags: vdcbd-backend:latest
 
       - name: Build Frontend Docker Image (Dry Run)
         uses: docker/build-push-action@v5
@@ -85,4 +85,4 @@ jobs:
           context: ./client
           file: ./client/Dockerfile
           push: false
-          tags: vtclbd-frontend:latest
+          tags: vdcbd-frontend:latest
