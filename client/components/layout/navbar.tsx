@@ -9,12 +9,12 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
   { label: "Projects", href: "/projects" },
   { label: "Interior", href: "/interior" },
   { label: "Trainings", href: "/courses" },
-  { label: "Contact", href: "/contact" },
   { label: "Career", href: "/career" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function Navbar() {
