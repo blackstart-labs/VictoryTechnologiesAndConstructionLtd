@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { RiMap2Line, RiCompass3Line } from "react-icons/ri";
 
 interface ContactMapProps {
   center: [number, number];
@@ -26,7 +27,11 @@ const locations = {
 export default function ContactMap({ center, zoom = 14, activeBranch }: ContactMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
+  
+  // Support toggling between Real Street Map and Satellite (Google Earth style)
+  const [mapMode, setMapMode] = useState<"street" | "satellite">("street");
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -40,26 +45,28 @@ export default function ContactMap({ center, zoom = 14, activeBranch }: ContactM
         tap: true,
       }).setView(center, zoom);
 
-      // Deep theme / Dark Matter tiles for a premium interactive aesthetic
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png", {
+      // Add default tile layer
+      const initialLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: "abcd",
         maxZoom: 20,
       }).addTo(map);
 
+      tileLayerRef.current = initialLayer;
+
       // Add zoom control to bottom-right
       L.control.zoom({ position: "bottomright" }).addTo(map);
 
       mapRef.current = map;
 
-      // Define beautiful custom pulsing markers matching theme colors (neon cyan and neon green)
+      // Define beautiful custom pulsing markers (using highly visible glowing pins)
       const createPulsingIcon = (color: string, pingColor: string) => {
         return L.divIcon({
           html: `
             <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
               <div class="animate-ping" style="position: absolute; width: 32px; height: 32px; border-radius: 9999px; background-color: ${pingColor}; opacity: 0.8; pointer-events: none;"></div>
-              <div style="position: relative; width: 14px; height: 16px; border-radius: 9999px; background-color: ${color}; border: 2.5px solid #18181b; box-shadow: 0 0 12px ${color};"></div>
+              <div style="position: relative; width: 16px; height: 16px; border-radius: 9999px; background-color: ${color}; border: 2.5px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>
             </div>
           `,
           className: "custom-leaflet-marker",
@@ -68,19 +75,19 @@ export default function ContactMap({ center, zoom = 14, activeBranch }: ContactM
         });
       };
 
-      const dhakaIcon = createPulsingIcon("#00f0ff", "rgba(0, 240, 255, 0.5)"); // Neon Cyan
-      const cumillaIcon = createPulsingIcon("#00ff66", "rgba(0, 255, 102, 0.5)"); // Neon Green
+      const dhakaIcon = createPulsingIcon("#0284c7", "rgba(14, 165, 233, 0.5)"); // Cyan / Sky Blue
+      const cumillaIcon = createPulsingIcon("#10b981", "rgba(52, 211, 153, 0.5)"); // Emerald Green
 
       // Place Dhaka Marker
       const dhakaMarker = L.marker(locations.dhaka.coords, { icon: dhakaIcon })
         .addTo(map)
         .bindPopup(
-          `<div style="font-family: inherit; font-size: 13px; color: #e4e4e7; line-height: 1.5; padding: 4px;">
-            <h4 style="font-weight: 700; margin: 0; color: #ffffff; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #00f0ff;"></span>
+          `<div style="font-family: inherit; font-size: 13px; color: #18181b; line-height: 1.5; padding: 4px;">
+            <h4 style="font-weight: 700; margin: 0; color: #0f172a; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #0284c7;"></span>
               ${locations.dhaka.title}
             </h4>
-            <p style="margin: 6px 0 0 0; color: #a1a1aa; font-size: 12px; font-weight: 500;">${locations.dhaka.desc}</p>
+            <p style="margin: 6px 0 0 0; color: #4b5563; font-size: 12px; font-weight: 500;">${locations.dhaka.desc}</p>
           </div>`
         );
 
@@ -88,12 +95,12 @@ export default function ContactMap({ center, zoom = 14, activeBranch }: ContactM
       const cumillaMarker = L.marker(locations.cumilla.coords, { icon: cumillaIcon })
         .addTo(map)
         .bindPopup(
-          `<div style="font-family: inherit; font-size: 13px; color: #e4e4e7; line-height: 1.5; padding: 4px;">
-            <h4 style="font-weight: 700; margin: 0; color: #ffffff; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #00ff66;"></span>
+          `<div style="font-family: inherit; font-size: 13px; color: #18181b; line-height: 1.5; padding: 4px;">
+            <h4 style="font-weight: 700; margin: 0; color: #0f172a; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background-color: #10b981;"></span>
               ${locations.cumilla.title}
             </h4>
-            <p style="margin: 6px 0 0 0; color: #a1a1aa; font-size: 12px; font-weight: 500;">${locations.cumilla.desc}</p>
+            <p style="margin: 6px 0 0 0; color: #4b5563; font-size: 12px; font-weight: 500;">${locations.cumilla.desc}</p>
           </div>`
         );
 
@@ -118,7 +125,7 @@ export default function ContactMap({ center, zoom = 14, activeBranch }: ContactM
 
     if (activeBranch) {
       const loc = locations[activeBranch];
-      mapRef.current.flyTo(loc.coords, 15, {
+      mapRef.current.flyTo(loc.coords, 16, {
         animate: true,
         duration: 1.5,
       });
@@ -135,28 +142,82 @@ export default function ContactMap({ center, zoom = 14, activeBranch }: ContactM
     }
   }, [center, activeBranch]);
 
+  // Sync Map Mode Tile Layer dynamically
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    if (tileLayerRef.current) {
+      mapRef.current.removeLayer(tileLayerRef.current);
+    }
+
+    let url = "";
+    let attribution = "";
+    
+    if (mapMode === "satellite") {
+      // Esri World Imagery (Satellite) for Google Earth feel
+      url = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
+      attribution = "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community";
+    } else {
+      // Clean high-detail Street map
+      url = "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+      attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+    }
+
+    const newLayer = L.tileLayer(url, {
+      attribution,
+      maxZoom: 20,
+    }).addTo(mapRef.current);
+
+    tileLayerRef.current = newLayer;
+  }, [mapMode]);
+
   return (
     <div className="relative w-full h-full">
-      {/* Styles for Leaflet to fix popup styling to blend beautifully with the deep theme */}
+      {/* Map Mode Switcher Control */}
+      <div className="absolute top-4 left-4 z-[1000] flex gap-1 bg-background/90 backdrop-blur-md p-1.5 rounded-xl shadow-lg border border-border">
+        <button
+          type="button"
+          onClick={() => setMapMode("street")}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            mapMode === "street"
+              ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          }`}
+        >
+          <RiMap2Line className="text-sm" /> Street Map
+        </button>
+        <button
+          type="button"
+          onClick={() => setMapMode("satellite")}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            mapMode === "satellite"
+              ? "bg-primary text-primary-foreground scale-105 shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-muted"
+          }`}
+        >
+          <RiCompass3Line className="text-sm" /> Satellite
+        </button>
+      </div>
+
+      {/* Styles for Leaflet to fix popup styling to blend beautifully */}
       <style jsx global>{`
         .leaflet-popup-content-wrapper {
-          border-radius: 16px;
-          background-color: #18181b !important;
-          color: #f4f4f5 !important;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
-          border: 1px solid #27272a;
-          padding: 4px;
+          border-radius: 14px;
+          background-color: white !important;
+          color: #0f172a !important;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+          border: 1px solid #e2e8f0;
+          padding: 2px;
         }
         .leaflet-popup-tip {
-          background-color: #18181b !important;
-          border: 1px solid #27272a;
+          background-color: white !important;
         }
         .leaflet-container {
           font-family: inherit;
-          background-color: #09090b !important;
+          background-color: #f1f5f9 !important;
         }
         .leaflet-popup-close-button {
-          color: #a1a1aa !important;
+          color: #94a3b8 !important;
           padding: 8px !important;
         }
       `}</style>
