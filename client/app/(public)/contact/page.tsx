@@ -13,8 +13,19 @@ import {
   RiCheckDoubleLine,
   RiBuildingLine,
 } from "react-icons/ri";
+import dynamic from "next/dynamic";
 
 import { CmsContent } from "@/components/cms-content";
+
+const ContactMap = dynamic(() => import("@/components/contact-map"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-zinc-500/5 flex flex-col items-center justify-center text-sm text-muted-foreground gap-3 animate-pulse">
+      <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+      Loading Interactive Map...
+    </div>
+  ),
+});
 
 const schema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -27,6 +38,7 @@ type ContactForm = z.infer<typeof schema>;
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [activeBranch, setActiveBranch] = useState<"dhaka" | "cumilla">("dhaka");
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ContactForm>({
     resolver: zodResolver(schema),
@@ -90,9 +102,33 @@ export default function ContactPage() {
                   <CmsContent
                     identifier="contact-office-address"
                     fallback={`Main Branch: Eastern Kamalapur Complex, 2nd Floor, Room No 206, Kamalapur, Dhaka 1000.\nCumilla Branch: Madhya Bazar, Chandina, Cumilla.`}
-                    className="text-xs sm:text-sm text-muted-foreground leading-relaxed"
+                    className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-line"
                     as="div"
                   />
+                  <div className="flex gap-2 mt-4">
+                    <button
+                      type="button"
+                      onClick={() => setActiveBranch("dhaka")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${
+                        activeBranch === "dhaka"
+                          ? "bg-primary text-primary-foreground scale-105"
+                          : "bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Dhaka (Main)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveBranch("cumilla")}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm ${
+                        activeBranch === "cumilla"
+                          ? "bg-secondary text-secondary-foreground scale-105"
+                          : "bg-muted text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Cumilla Branch
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -223,18 +259,12 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* ── Interactive Map Embed Placeholder ─────────────────────────────── */}
+      {/* ── Interactive Map Embed ─────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl border border-border overflow-hidden h-96 shadow-sm hover:border-primary/20 transition-all duration-300">
-          <iframe
-            title="Victory Design & Construction Location Map"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.793740263651!2d90.4262174!3d23.7279768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b85a3c2005a9%3A0xa19bf9e8a7197022!2sKamalapur%20Dhaka%201000!5e0!3m2!1sen!2sbd!4v1716301290355!5m2!1sen!2sbd"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
+          <ContactMap
+            center={activeBranch === "dhaka" ? [23.7279768, 90.4262174] : [23.4833, 91.0083]}
+            activeBranch={activeBranch}
           />
         </div>
       </section>
